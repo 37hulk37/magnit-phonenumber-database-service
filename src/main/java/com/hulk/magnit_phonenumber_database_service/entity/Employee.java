@@ -32,5 +32,5 @@ public class Employee {
     private String department;
 
     @Column(name = "phonenumber")
-    private String phoneNumber;
+    private String phonenumber;
 }
