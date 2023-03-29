@@ -25,12 +25,10 @@ public class Employee {
     private String name;
     @Column(name = "surname")
     private String surname;
-
     @Column(name = "role")
     private String role;
     @Column(name = "department")
     private String department;
-
     @Column(name = "phonenumber")
     private String phonenumber;
 }
