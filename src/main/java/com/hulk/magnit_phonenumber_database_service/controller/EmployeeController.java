@@ -3,60 +3,46 @@ package com.hulk.magnit_phonenumber_database_service.controller;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-@Controller
-@RequestMapping("/api")
+@RestController
+@RequestMapping("/api/v1/controller")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
     @PostMapping("/employees")
-    public String createEmployee(@ModelAttribute("employee") Employee employee) {
+    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
         employeeService.saveEmployee(employee);
 
-        return "redirect:/api/get-employees";
-    }
-
-    @GetMapping("/create-employees")
-    public String createEmployee(Model model) {
-        model.addAttribute("employee", new Employee());
-
-        return "create-employee";
+        return ResponseEntity.ok(employee);
     }
 
     @PutMapping("/employees")
-    public String updateEmployee(@ModelAttribute("employee") Employee employee) {
+    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee employee) {
         employeeService.saveEmployee(employee);
 
-        return "redirect:/api/get-employees";
+        return ResponseEntity.ok(employee);
     }
 
     @GetMapping("/employees/{id}")
-    public String getEmployee(@PathVariable UUID id, Model model) {
-        Employee employee = employeeService.getEmployee(id);
-        model.addAttribute("employee", employee);
+    public ResponseEntity<Employee> getEmployee(@PathVariable UUID id) {
+        return ResponseEntity.ok(employeeService.getEmployee(id));
+    }
 
-        return "employee";
+    @GetMapping("/employees")
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
     @DeleteMapping("/employees/{id}")
-    public String deleteEmployee(@PathVariable UUID id) {
+    public ResponseEntity<String> deleteEmployee(@PathVariable UUID id) {
         employeeService.deleteEmployee(id);
 
-        return "redirect:/api/get-employees";
-    }
-
-    @GetMapping("/get-employees")
-    public String getAllEmployees(Model model) {
-        List<Employee> employees = employeeService.getAllEmployees();
-        model.addAttribute("employees", employees);
-
-        return "all-employees";
+        return ResponseEntity.ok("Employee with id = " + id + " was deleted");
     }
 }
