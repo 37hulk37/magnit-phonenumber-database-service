@@ -1,5 +1,6 @@
-package com.hulk.magnit_phonenumber_database_service.config.jwt;
+package com.hulk.magnit_phonenumber_database_service.config;
 
+import com.hulk.magnit_phonenumber_database_service.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +24,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                    .requestMatchers("/api/v1/auth/**").permitAll()
-                    .requestMatchers("/api/v1/controller/**").permitAll()
+                    .requestMatchers("/api/v1/controller", "/api/v1/auth/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

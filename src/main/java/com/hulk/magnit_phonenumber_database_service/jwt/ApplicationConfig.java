@@ -1,6 +1,7 @@
-package com.hulk.magnit_phonenumber_database_service.config.jwt;
+package com.hulk.magnit_phonenumber_database_service.jwt;
 
-import com.hulk.magnit_phonenumber_database_service.dao.EmployeeRepository;
+
+import com.hulk.magnit_phonenumber_database_service.service.EmployeeServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final EmployeeRepository repository;
+    private final EmployeeServiceImpl service;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository
+        return username -> service
                 .findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }

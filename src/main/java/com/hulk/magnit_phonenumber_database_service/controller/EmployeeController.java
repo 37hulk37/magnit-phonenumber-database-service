@@ -4,16 +4,23 @@ import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@Controller
 @RequestMapping("/api/v1/controller")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
+
+    @GetMapping()
+    public String home(Model model) {
+        return "login";
+    }
 
     @PostMapping("/employees")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {

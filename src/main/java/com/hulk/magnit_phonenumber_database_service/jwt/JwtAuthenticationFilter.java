@@ -1,4 +1,4 @@
-package com.hulk.magnit_phonenumber_database_service.config.jwt;
+package com.hulk.magnit_phonenumber_database_service.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

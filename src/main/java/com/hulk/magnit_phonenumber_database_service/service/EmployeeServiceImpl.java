@@ -27,14 +27,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee getEmployee(UUID id) {
-        Employee employee = null;
-        Optional<Employee> optional = employeeRepository.findById(id);
-
-        if (optional.isPresent()) {
-            employee = optional.get();
-        }
-
-        return employee;
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("There is no user with this id"));
     }
 
     @Override
