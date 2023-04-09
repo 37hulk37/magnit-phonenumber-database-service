@@ -24,8 +24,11 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                    .requestMatchers("/api/v1/controller", "/api/v1/auth/**").permitAll()
-                    .anyRequest().authenticated()
+                .requestMatchers("/*js","/*js",
+                        "/home", "/auth/**", "/favicon.ico").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .logout().permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

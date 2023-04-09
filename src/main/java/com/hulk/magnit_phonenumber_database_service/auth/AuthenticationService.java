@@ -44,7 +44,7 @@ public class AuthenticationService {
                 .department(request.getDepartment())
                 .phonenumber(request.getPhonenumber())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.ROLE_USER)
+                .role(Role.USER)
                 .build();
 
         employeeService.saveEmployee(employee);
@@ -57,7 +57,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse registerSession(AuthenticationRequest request) {
+    public AuthenticationResponse registerSession(AuthenticationRequest request)  {
         log.info("Starting session registration...");
         String email = request.getEmail();
         Optional<Employee> employee = employeeService.findByEmail(email);

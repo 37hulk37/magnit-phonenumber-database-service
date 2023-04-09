@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/api/v1/controller")
+@RequestMapping("/home")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
     @GetMapping()
-    public String home(Model model) {
+    public String login(Model model) {
         return "login";
     }
 
