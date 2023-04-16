@@ -34,7 +34,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Page<Employee> getEmployees(int offset, int limit, EmployeeSort sort) {
-        log.info("Getting employees, offset = " + offset + " and limit = " + limit);
+        log.info("Getting employees with offset = " + offset +
+                ", limit = " + limit + ", sort = " + sort.toString());
         return employeeRepository.findAll(PageRequest.of(offset, limit, sort.getSortValue()));
     }
 
