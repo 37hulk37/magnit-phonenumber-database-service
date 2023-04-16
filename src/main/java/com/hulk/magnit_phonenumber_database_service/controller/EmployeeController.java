@@ -2,7 +2,11 @@ package com.hulk.magnit_phonenumber_database_service.controller;
 
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.service.EmployeeService;
+import com.hulk.magnit_phonenumber_database_service.service.EmployeeSort;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,9 +45,18 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getEmployee(id));
     }
 
-    @GetMapping("/employees")
+    @GetMapping("/employees/all")
     public ResponseEntity<List<Employee>> getAllEmployees() {
         return ResponseEntity.ok(employeeService.getAllEmployees());
+    }
+
+    @GetMapping("/employees")
+    public ResponseEntity<Page<Employee>> getEmployees(
+            @RequestParam(value = "offset", defaultValue = "0") @Min(0) int offset,
+            @RequestParam(value = "limit", defaultValue = "20") @Min(1) @Max(40) int limit,
+            @RequestParam(value = "sort", defaultValue = "ID_ASC") EmployeeSort sort
+            ) {
+        return ResponseEntity.ok(employeeService.getEmployees(offset, limit, sort));
     }
 
     @DeleteMapping("/employees/{id}")
