@@ -5,6 +5,8 @@ import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> getAllEmployees() {
         log.info("Getting all employees");
         return employeeRepository.findAll();
+    }
+
+    @Override
+    public Page<Employee> getEmployees(int offset, int limit, EmployeeSort sort) {
+        log.info("Getting employees, offset = " + offset + " and limit = " + limit);
+        return employeeRepository.findAll(PageRequest.of(offset, limit, sort.getSortValue()));
     }
 
     @Override
