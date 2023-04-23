@@ -27,6 +27,8 @@ public class Employee implements UserDetails {
     private String name;
     @Column(name = "surname")
     private String surname;
+//    @Column(name = "boss")
+//    private UUID bossId;
     @Column(name = "department")
     private String department;
     @Column(name = "phonenumber")
@@ -38,6 +40,15 @@ public class Employee implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public Employee(EmployeeDTO employeeDTO) {
+        this.id = employeeDTO.id();
+        this.name = employeeDTO.name();
+        this.surname = employeeDTO.surname();
+        this.department = employeeDTO.department();
+        this.phonenumber = employeeDTO.phonenumber();
+        this.email = employeeDTO.email();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
