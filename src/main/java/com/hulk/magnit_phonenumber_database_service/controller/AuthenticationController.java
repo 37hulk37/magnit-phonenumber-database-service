@@ -6,10 +6,9 @@ import com.hulk.magnit_phonenumber_database_service.auth.AuthenticationService;
 import com.hulk.magnit_phonenumber_database_service.auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
@@ -17,7 +16,6 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest request) {
-        System.out.println(request);
         return ResponseEntity.ok(service.registerSession(request));
     }
 

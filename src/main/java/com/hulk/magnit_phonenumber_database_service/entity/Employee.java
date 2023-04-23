@@ -48,6 +48,7 @@ public class Employee implements UserDetails {
         this.department = employeeDTO.department();
         this.phonenumber = employeeDTO.phonenumber();
         this.email = employeeDTO.email();
+        this.role = employeeDTO.role();
     }
 
     @Override

@@ -8,6 +8,7 @@ public record EmployeeDTO (
         String surname,
         String department,
         String email,
-        String phonenumber
+        String phonenumber,
+        Role role
 ) {
 }

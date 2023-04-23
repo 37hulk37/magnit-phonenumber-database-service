@@ -1,6 +1,7 @@
 package com.hulk.magnit_phonenumber_database_service.auth;
 
 
+import com.hulk.magnit_phonenumber_database_service.entity.EmployeeDTOMapper;
 import com.hulk.magnit_phonenumber_database_service.exception.EmployeeAlreadyExistsException;
 import com.hulk.magnit_phonenumber_database_service.exception.EmployeeNotFoundException;
 import com.hulk.magnit_phonenumber_database_service.jwt.JwtService;
@@ -10,6 +11,7 @@ import com.hulk.magnit_phonenumber_database_service.service.EmployeeServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,10 +24,16 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final EmployeeServiceImpl employeeService;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private EmployeeServiceImpl employeeService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private EmployeeDTOMapper employeeDTOMapper;
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
     public AuthenticationResponse registerEmployee(RegisterRequest request) {
@@ -50,6 +58,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .code(HttpStatus.CREATED)
                 .token(jwtToken)
+                .user(employeeDTOMapper.apply(employee))
                 .build();
     }
 
@@ -66,6 +75,7 @@ public class AuthenticationService {
             return AuthenticationResponse.builder()
                     .code(HttpStatus.ACCEPTED)
                     .token(jwtToken)
+                    .user(employeeDTOMapper.apply(foundEmployee.get()))
                     .build();
         }
     }

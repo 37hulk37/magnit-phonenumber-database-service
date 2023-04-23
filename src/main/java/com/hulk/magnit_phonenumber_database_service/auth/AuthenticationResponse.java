@@ -1,5 +1,6 @@
 package com.hulk.magnit_phonenumber_database_service.auth;
 
+import com.hulk.magnit_phonenumber_database_service.entity.EmployeeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,4 +14,5 @@ import org.springframework.http.HttpStatus;
 public class AuthenticationResponse {
     private String token;
     private HttpStatus code;
+    private EmployeeDTO user;
 }
