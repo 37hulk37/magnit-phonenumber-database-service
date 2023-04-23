@@ -1,6 +1,8 @@
 package com.hulk.magnit_phonenumber_database_service.auth;
 
 
+import com.hulk.magnit_phonenumber_database_service.exception.EmployeeAlreadyExistsException;
+import com.hulk.magnit_phonenumber_database_service.exception.EmployeeNotFoundException;
 import com.hulk.magnit_phonenumber_database_service.jwt.JwtService;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.entity.Role;
@@ -11,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +31,7 @@ public class AuthenticationService {
     public AuthenticationResponse registerEmployee(RegisterRequest request) {
         log.info("Starting registration...");
         if (employeeService.existsUserByEmail(request.getEmail())) {
-            log.warn("Failed to register, User with this email already exists");
-            return AuthenticationResponse.builder()
-                    .code(HttpStatus.IM_USED)
-                    .token(null)
-                    .build();
+            throw new EmployeeAlreadyExistsException("Failed to register, user already exists with email: " + request.getEmail());
         }
         var employee = Employee.builder()
                 .name(request.getName())
@@ -60,15 +56,11 @@ public class AuthenticationService {
     public AuthenticationResponse registerSession(AuthenticationRequest request)  {
         log.info("Starting session registration...");
         String email = request.getEmail();
-        Optional<Employee> employee = employeeService.findByEmail(email);
-        if (employee.isEmpty()) {
-            log.warn("Failed to register session, there is no employee with email: " + email);
-            return AuthenticationResponse.builder()
-                    .code(HttpStatus.NOT_FOUND)
-                    .token(null)
-                    .build();
+        Optional<Employee> foundEmployee = employeeService.findByEmail(email);
+        if (foundEmployee.isEmpty()) {
+            throw new EmployeeNotFoundException("Failed to register session, there is no employee with email: " + email);
         } else {
-            var jwtToken = jwtService.generateToken(employee.get());
+            var jwtToken = jwtService.generateToken(foundEmployee.get());
             log.info("Session registration completed");
 
             return AuthenticationResponse.builder()
@@ -80,21 +72,15 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         log.info("Starting authentication...");
-        Employee user;
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
-            );
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
 
-            user = employeeService.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new UsernameNotFoundException("There is no employee with this email"));
-        } catch(AuthenticationException e) {
-            log.warn("Failed to authenticate, " + e.getMessage());
-            throw e;
-        }
+        Employee user = employeeService.findByEmail(request.getEmail())
+                .orElseThrow(() -> new EmployeeNotFoundException("There is no employee with this email"));
 
         var jwtToken = jwtService.generateToken(user);
         log.info("Authentication completed");

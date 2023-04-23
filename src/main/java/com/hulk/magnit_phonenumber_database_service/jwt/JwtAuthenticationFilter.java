@@ -34,20 +34,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
+        String jwt = null;
+        String userEmail = null;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        jwt = authHeader.substring(7);
-        try {
-            userEmail = jwtService.extractUsername(jwt);
-        } catch (JwtException e) {
-            log.warn("Failed to pass JwtAuthenticationFilter: " + e.getMessage());
-            throw e;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            jwt = authHeader.substring(7);
+            try {
+                userEmail = jwtService.extractUsername(jwt);
+            } catch (JwtException e) {
+                log.warn(e.getMessage());
+            }
+        } else {
+            log.warn("JWT Token does not begin with Bearer String");
         }
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
