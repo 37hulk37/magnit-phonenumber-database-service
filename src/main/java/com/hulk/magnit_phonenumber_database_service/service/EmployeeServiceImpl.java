@@ -2,15 +2,14 @@ package com.hulk.magnit_phonenumber_database_service.service;
 
 import com.hulk.magnit_phonenumber_database_service.dao.EmployeeRepository;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
+import com.hulk.magnit_phonenumber_database_service.exception.EmployeeNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,12 +26,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> getAllEmployees() {
-        log.info("Getting all employees");
-        return employeeRepository.findAll();
-    }
-
-    @Override
     public Page<Employee> getEmployees(int offset, int limit, EmployeeSort sort) {
         log.info("Getting employees with offset = " + offset +
                 ", limit = " + limit + ", sort = " + sort.toString());
@@ -43,11 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee getEmployee(UUID id) {
         log.info("Getting employee with id: " + id);
         return employeeRepository.findById(id)
-                .orElseThrow(() -> {
-                    var e = new UsernameNotFoundException("There is no employee with this id");
-                    log.warn("Failed to get employee with id: " + id);
-                    return e;
-                });
+                .orElseThrow(() -> new EmployeeNotFoundException("Failed to get employee with id: " + id));
     }
 
     @Override
