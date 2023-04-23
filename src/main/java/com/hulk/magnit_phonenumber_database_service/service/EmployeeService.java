@@ -7,15 +7,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EmployeeService {
-    public void saveEmployee(Employee employee);
+    void saveEmployee(Employee employee);
 
-    public Page<Employee> getEmployees(int offset, int limit, EmployeeSort sort);
+    Page<Employee> getEmployees(int offset, int limit, EmployeeSort sort);
 
-    public Employee getEmployee(UUID id);
+    Employee getEmployee(UUID id);
 
-    public void deleteEmployee(UUID id);
+    void deleteEmployee(UUID id);
 
     Optional<Employee> findByEmail(String email);
 
-    public boolean existsUserByEmail(String email);
+    boolean existsUserByEmail(String email);
 }
