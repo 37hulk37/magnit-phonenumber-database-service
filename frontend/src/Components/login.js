@@ -1,8 +1,10 @@
 import React from "react";
-import {getAuth, logIn, setAuth} from "../scripts/api.js";
+import {getAuth, logIn, setAuth, setToken} from "../scripts/api.js";
 import {withRouter} from "./withRouter";
+import {showAlert} from "../scripts/util";
 class Login extends React.Component {
 
+    //TODO: добавить Enter
     constructor(props) {
         super(props);
 
@@ -39,11 +41,25 @@ class Login extends React.Component {
             this.setState({formIsActive: false});
             console.log(this.state.email);
             console.log(this.state.password);
-            logIn(this.state.email, this.state.password,
-                () => {
+            logIn(
+                this.state.email,
+                this.state.password,
+                (data) => {
+                    if(data.code === 'ACCEPTED') {
+                        this.props.navigate('/lk');
+                        setAuth(true);
+                        setToken(data.token);
+                        this.props.onAuth(data.user);
+                    } else {
+                        console.log(data);
+                        showAlert('Неверный адрес почты или пароль');
+                    }
+                    this.setState({formIsActive: true});
+                },
+            (err) => {
+                showAlert(err);
+                console.log(err);
                 this.setState({formIsActive: true});
-                //setAuth(true);
-                this.props.navigate('/lk');
             });
         }
     }

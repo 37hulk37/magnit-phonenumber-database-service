@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS employees (
        id uuid NOT NULL,
        name varchar(32) NOT NULL,
        surname varchar(32) NOT NULL,
-       boss_id uuid NOT NULL,
+       boss_id uuid,
        role varchar(32) NOT NULL,
        email varchar(128) NOT NULL,
        password varchar(256) NOT NULL,
