@@ -28,8 +28,7 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/*js","/*js",
-                        "/home", "/auth/**", "/favicon.ico").permitAll()
+                .requestMatchers("/home", "/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .logout().permitAll()

@@ -1,49 +1,44 @@
 package com.hulk.magnit_phonenumber_database_service.auth;
 
 
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeDTOMapper;
+import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTOMapper;
 import com.hulk.magnit_phonenumber_database_service.exception.EmployeeAlreadyExistsException;
 import com.hulk.magnit_phonenumber_database_service.exception.EmployeeNotFoundException;
 import com.hulk.magnit_phonenumber_database_service.jwt.JwtService;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.entity.Role;
-import com.hulk.magnit_phonenumber_database_service.service.EmployeeServiceImpl;
-import lombok.RequiredArgsConstructor;
+import com.hulk.magnit_phonenumber_database_service.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
-@RequiredArgsConstructor
 public class AuthenticationService {
     @Autowired
-    private EmployeeServiceImpl employeeService;
+    private EmployeeService employeeService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtService jwtService;
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
     private EmployeeDTOMapper employeeDTOMapper;
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public AuthenticationResponse registerEmployee(RegisterRequest request) {
+    public AuthenticationResponse createEmployee(RegisterRequest request) {
         log.info("Starting registration...");
         if (employeeService.existsUserByEmail(request.getEmail())) {
-            throw new EmployeeAlreadyExistsException("Failed to register, user already exists with email: " + request.getEmail());
+            throw new EmployeeAlreadyExistsException("Failed to register, " +
+                    "employee already exists with email: " + request.getEmail());
         }
         var employee = Employee.builder()
                 .name(request.getName())
                 .surname(request.getSurname())
+                .bossId(request.getBossId())
                 .email(request.getEmail())
                 .department(request.getDepartment())
                 .phonenumber(request.getPhonenumber())
@@ -62,7 +57,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse registerSession(AuthenticationRequest request)  {
+    public AuthenticationResponse authenticate(AuthenticationRequest request)  {
         log.info("Starting session registration...");
         String email = request.getEmail();
         Optional<Employee> foundEmployee = employeeService.findByEmail(email);
@@ -78,26 +73,5 @@ public class AuthenticationService {
                     .user(employeeDTOMapper.apply(foundEmployee.get()))
                     .build();
         }
-    }
-
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        log.info("Starting authentication...");
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-
-        Employee user = employeeService.findByEmail(request.getEmail())
-                .orElseThrow(() -> new EmployeeNotFoundException("There is no employee with this email"));
-
-        var jwtToken = jwtService.generateToken(user);
-        log.info("Authentication completed");
-
-        return AuthenticationResponse.builder()
-                .code(HttpStatus.ACCEPTED)
-                .token(jwtToken)
-                .build();
     }
 }

@@ -1,6 +1,6 @@
 package com.hulk.magnit_phonenumber_database_service.auth;
 
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeDTO;
+import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

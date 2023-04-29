@@ -1,5 +1,6 @@
 package com.hulk.magnit_phonenumber_database_service.entity;
 
+import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -27,8 +28,8 @@ public class Employee implements UserDetails {
     private String name;
     @Column(name = "surname")
     private String surname;
-//    @Column(name = "boss")
-//    private UUID bossId;
+    @Column(name = "boss_id")
+    private UUID bossId;
     @Column(name = "department")
     private String department;
     @Column(name = "phonenumber")
@@ -45,6 +46,7 @@ public class Employee implements UserDetails {
         this.id = employeeDTO.id();
         this.name = employeeDTO.name();
         this.surname = employeeDTO.surname();
+        this.bossId = employeeDTO.bossId();
         this.department = employeeDTO.department();
         this.phonenumber = employeeDTO.phonenumber();
         this.email = employeeDTO.email();

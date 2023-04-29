@@ -1,5 +1,6 @@
-package com.hulk.magnit_phonenumber_database_service.entity;
+package com.hulk.magnit_phonenumber_database_service.dto;
 
+import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Function;

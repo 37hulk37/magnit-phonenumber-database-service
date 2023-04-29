@@ -1,9 +1,11 @@
 package com.hulk.magnit_phonenumber_database_service.service;
 
+import com.hulk.magnit_phonenumber_database_service.dao.EmployeeCriteriaRepository;
 import com.hulk.magnit_phonenumber_database_service.dao.EmployeeRepository;
+import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTOMapper;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeDTO;
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeDTOMapper;
+import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
+import com.hulk.magnit_phonenumber_database_service.entity.EmployeeSearchCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +14,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private EmployeeCriteriaRepository employeeCriteriaRepository;
     @Autowired
     private EmployeeDTOMapper employeeDTOMapper;
     private static final Logger log = LoggerFactory.getLogger(EmployeeServiceImpl.class);
@@ -32,12 +34,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getAllEmployees() {
-        log.info("Getting all employees");
-        return employeeRepository.findAll()
-                .stream()
-                .map(employeeDTOMapper)
-                .collect(Collectors.toList());
+    public Page<EmployeeDTO> getEmployeesWithFilters(int offset, int limit, EmployeeSort sort, EmployeeSearchCriteria searchCriteria) {
+        log.info("Getting employees with criteria = " + searchCriteria);
+        return employeeCriteriaRepository.findAllWithFilters(searchCriteria)
+                .map(employeeDTOMapper);
     }
 
     @Override
@@ -49,10 +49,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDTO getEmployee(UUID id) {
+    public Employee getEmployee(UUID id) {
         log.info("Getting employee with id: " + id);
-       return employeeRepository.findById(id)
-               .map(employeeDTOMapper)
+        return employeeRepository.findById(id)
                 .orElseThrow(() -> {
                     var e = new UsernameNotFoundException("There is no employee with this id");
                     log.warn("Failed to get employee with id: " + id);
@@ -74,12 +73,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public boolean existsUserByEmail(String email) {
-        boolean doesUserExists = employeeRepository.existsUserByEmail(email);
+        boolean doesUserExists = employeeRepository.existsEmployeeByEmail(email);
         if (doesUserExists) {
             log.debug("User exists with email: " + email);
         } else {
             log.debug("User does not exist with email: " + email);
         }
-        return employeeRepository.existsUserByEmail(email);
+        return employeeRepository.existsEmployeeByEmail(email);
     }
 }
