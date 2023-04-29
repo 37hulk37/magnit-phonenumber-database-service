@@ -9,7 +9,10 @@ const listeners = [];
 
 function setAuth(auth){
     Cookies.set('auth', auth);
-    listeners.forEach((el) => {el.setState({authed: auth})})
+    listeners.forEach((el) => {
+        el.setState({authed: auth});
+        el.setState({user: null});
+    })
 }
 
 function addSetAuthListener(listener){
@@ -23,6 +26,7 @@ function getAuth(){
 function getToken(){
     return Cookies.get('token');
 }
+
 
 function postData(address, body, onSuccess, onFail = showAlert){
     fetch(address, {
@@ -47,8 +51,8 @@ function postData(address, body, onSuccess, onFail = showAlert){
         });
 }
 
-function logIn(name, password, always){
-    fetch('/auth/register', {
+function logIn(name, password, onSuccess, onFail){
+    fetch('/auth/authenticate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -60,51 +64,20 @@ function logIn(name, password, always){
     })
         .then((response) => {
             if(response.ok){
-                return response.text();
+                return response.json();
             }
 
             throw new Error('Login error');
         })
-        .then((token) => {
-            setToken(token);
-            setAuth(true);
-            console.log(token);
-        })
-        .catch((err) => {
-            console.error(err);
-            showAlert(err);
-        })
-        .finally(()=>{
-            always();
-    });
-}
-/*
-function getUserById(id, onSuccess, onFail = showAlert){
-    fetch('/api/v1/controller/employees', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`
-        },
-        body: {
-            'userId': id,
-        }
-    })
         .then((response) => {
-            if(response.ok){
-                return response.json();
-            }
-
-            throw new Error(`Couldn't get users from the server`);
-        })
-        .then((data) => {
-            onSuccess(data);
+            console.log(response);
+            onSuccess(response);
         })
         .catch((err) => {
-            console.error(err);
             onFail(err);
         });
 }
-*/
+
 function getData(address, onSuccess, onFail = showAlert){
     fetch(address, {
         method: 'GET',
@@ -154,6 +127,6 @@ function putData(address, body, onSuccess, onFail = showAlert){
 }
 
 
-export {logIn, getData, putData};
+export {logIn, getData, putData, postData};
 export {getToken, setToken};
 export {getAuth, setAuth, addSetAuthListener};

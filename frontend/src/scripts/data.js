@@ -1,15 +1,20 @@
 const departments = [
-    'IT отдел',
+    'IT',
     'Менеджмент',
     'Управленческий отдел',
     'Кадровый отдел',
     'Рекламный отдел'
 ];
 
+const departmentValues = [
+    'IT',
+    'Management'
+];
+
 
 const roles = [
-    'User',
-    'Admin',
+    'USER',
+    'ADMIN',
 ];
 
 

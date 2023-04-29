@@ -1,9 +1,9 @@
 import React from "react";
 import {showAlert} from "../scripts/util.js";
-import {addSetAuthListener, getAuth, putData} from "../scripts/api.js";
-import Option from "./option";
-import {departments, roles} from "../scripts/data";
+import {addSetAuthListener, postData} from "../scripts/api.js";
 import {Navigate} from "react-router-dom";
+import DepartmentSelect from "./departmentSelect";
+import RoleSelect from "./roleSelect";
 
 class CreateEmployee extends React.Component {
 
@@ -13,13 +13,15 @@ class CreateEmployee extends React.Component {
         this.state = {
             addButtonActive: true,
 
-            department: '',
-            surname: '',
-            name: '',
-            phonenumber: '',
-            email: '',
-            password: '',
-            role: ''
+            params: {
+                department: '',
+                surname: '',
+                name: '',
+                phonenumber: '',
+                email: '',
+                password: '',
+                role: ''
+            }
         }
 
         addSetAuthListener(this);
@@ -30,7 +32,7 @@ class CreateEmployee extends React.Component {
     render() {
 
         if(this.props.authed === false || this.props.authed === 'false'){
-            return <Navigate replace to="/login" />;
+            return <Navigate replace to="/" />;
         }
 
         return (
@@ -38,44 +40,32 @@ class CreateEmployee extends React.Component {
                 <h2>Добавить нового сотрудника</h2>
                 <form id="createEmployeeForm" method="post">
                     <label htmlFor="department">Отделение: </label><br/>
-                    <select name="department" id="department" ref={(el) => this.departmnet = el}
-                            onChange={(evt) => this.setState({department: evt.target.value})}>
-                        {
-                            departments.map((el) => (
-                                <Option value={el} key={el}/>
-                            ))
-                        }
-                    </select><br/>
+                    <DepartmentSelect name="department" id="department" ref={(el) => this.department = el}
+                            onChange={(val) => this.setState({params : {...this.state.params, department: val}})} /><br/>
 
                     <label htmlFor="surname">Фамилия: </label><br/>
                     <input type="text" name="surname" id="surname"
-                           onChange={(evt) => this.setState({surname: evt.target.value})}></input><br/>
+                           onChange={(evt) => this.setState({params : {...this.state.params, surname: evt.target.value}})}></input><br/>
 
                     <label htmlFor="name">Имя: </label><br/>
                     <input type="text" name="name" id="name"
-                           onChange={(evt) => this.setState({name: evt.target.value})}></input><br/>
+                           onChange={(evt) => this.setState({params : {...this.state.params, name: evt.target.value}})}></input><br/>
 
                     <label htmlFor="phonenumber">Телефон: </label><br/>
                     <input type="tel" name="phonenumber" id="phonenumber" placeholder="+7 (***) - *** - ** - **"
-                           onChange={(evt) => this.setState({phonenumber: evt.target.value})}></input><br/>
+                           onChange={(evt) => this.setState({params : {...this.state.params, phonenumber: evt.target.value}})}></input><br/>
 
                     <label htmlFor="email">Email: </label><br/>
                     <input type="email" name="email" id="email" placeholder="example@mail.ru"
-                           onChange={(evt) => this.setState({email: evt.target.value})}></input><br/>
+                           onChange={(evt) => this.setState({params : {...this.state.params, email: evt.target.value}})}></input><br/>
 
                     <label htmlFor="password">Изначальный пароль: </label><br/>
-                    <input type="text" name="password" id="password" value="basePassword"
-                           onChange={(evt) => this.setState({password: evt.target.value})}></input><br/>
+                    <input type="text" name="password" id="password" defaultValue="basePassword"
+                           onChange={(evt) => this.setState({params : {...this.state.params, password: evt.target.value}})}></input><br/>
 
                     <label htmlFor="role">Роль: </label><br/>
-                    <select name="role" id="role"
-                            onChange={(evt) => this.setState({role: evt.target.value})}>
-                        {
-                            roles.map((el) => (
-                                <Option value={el} key={el}/>
-                            ))
-                        }
-                    </select><br/>
+                    <RoleSelect name="role" id="role"
+                            onChange={(val) => this.setState({params : {...this.state.params, role: val}})} /><br/>
 
                     <div className="buttons">
                         <input type="button" value="Добавить работника" onClick={this.addButtonChange}></input>
@@ -89,20 +79,12 @@ class CreateEmployee extends React.Component {
         evt.preventDefault();
         if(this.state.addButtonActive){
             this.setState({addButtonActive: false});
-            const sendBody = {
-                department: this.state.department,
-                email: this.state.email,
-                name: this.state.name,
-                surname: this.state.surname,
-                phonenumber: this.state.phonenumber,
-                password: this.state.password,
-                role: this.state.role
-            }
+            const sendBody = {...this.state.params};
 
             console.log(sendBody)
 
-            putData(
-                'http://localhost:8080/api/v1/auth/create-employee',
+            postData(
+                'auth/create-employee',
                 sendBody,
                 () => {this.setState({addButtonActive: true})},
                 (err) => {

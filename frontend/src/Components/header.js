@@ -4,7 +4,7 @@ import {NavLink} from "react-router-dom";
 import {setAuth} from "../scripts/api.js";
 class Header extends React.Component {
 
-
+//TODO: добавить норм кнопку выхода
 
     render() {
         if(this.props.authed === false || this.props.authed === 'false') {
