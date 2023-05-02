@@ -6,9 +6,12 @@ const departments = [
     'Рекламный отдел'
 ];
 
-const departmentValues = [
+const departmentsValues = [
     'IT',
-    'Management'
+    'Management',
+    'Control',
+    'HR',
+    'Advertising'
 ];
 
 
@@ -18,4 +21,4 @@ const roles = [
 ];
 
 
-export {departments, roles};
+export {departments, departmentsValues, roles};

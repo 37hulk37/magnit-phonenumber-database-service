@@ -1,14 +1,16 @@
 import React from "react";
 import {Select} from "antd";
-import {departments} from "../scripts/data";
+import {departments, departmentsValues} from "../scripts/data";
 
 //TODO: поменять value
 class DepartmentSelect extends React.Component {
     constructor(props) {
         super(props);
 
-        this.departments.push({value: '', label: 'Не выбрано', key: ''})
-        departments.forEach(value => {this.departments.push({value: value, label: value, key: value})})
+        this.departments.push({value: '', label: 'Не выбрано', key: ''});
+        for(let i = 0; i < departments.length; i++){
+            this.departments.push({value: departmentsValues[i], label: departments[i], key: departmentsValues[i]});
+        }
 
     }
     departments = [];
