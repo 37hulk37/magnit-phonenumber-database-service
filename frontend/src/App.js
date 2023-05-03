@@ -1,13 +1,16 @@
 import React from "react";
-import Login from "./Components/login";
-import Lk from "./Components/lk";
-import Search from "./Components/search";
-import CreateEmployee from "./Components/createEmployee";
-import Header from "./Components/header";
+import Login from "./Pages/login";
+import Lk from "./Pages/lk";
+import Search from "./Pages/search";
+import CreateEmployee from "./Pages/createEmployee";
+import NavHeader from "./Pages/navHeader";
+import InfoFooter from "./Pages/infoFooter";
 import {Route, Routes} from "react-router-dom";
-import {addSetAuthListener, getAuth, getToken} from "./scripts/api";
+import {addSetAuthListener} from "./scripts/api";
+import {Layout} from 'antd';
+const { Content, } = Layout;
 
-
+//TODO: Footer к низу растянуть
 class App extends React.Component {
 
     constructor(props) {
@@ -18,15 +21,16 @@ class App extends React.Component {
             user: {
                 id: '',
                 name: '',
-                surname: '',
+                surname: 'a',
                 department: '',
                 email: '',
                 role: '',
-                phonenumber: ''
+                phonenumber: '',
+                password: '',
+                bossId: ''
             }
         }
         this.changeUser = this.changeUser.bind(this);
-        this.logUser = this.logUser.bind(this);
     }
 
     componentDidMount() {
@@ -35,18 +39,20 @@ class App extends React.Component {
 
     render() {
         return(
-            <div>
-                <button onClick={() => {console.log(this.state.user)}}>check</button>
-                <Header authed={this.state.authed}/>
-                <div className="content">
+            <Layout className="wrapper">
+                {/*<button onClick={() => {console.log([this.state.user, getAuth()])}}>check</button>*/}
+                <NavHeader authed={this.state.authed}/>
+                <Content className="content">
                     <Routes>
                         <Route path="/" element={<Login authed={this.state.authed} onAuth={this.changeUser}/>} />
                         <Route path="/lk" element={<Lk authed={this.state.authed} user={this.state.user} onChange={this.changeUser}/>}/>
                         <Route path="/search" element={<Search authed={this.state.authed} user={this.state.user}/>}/>
                         <Route path="/create-employee" element={<CreateEmployee authed={this.state.authed} user={this.state.user}/>}/>
                     </Routes>
-                </div>
-            </div>
+                </Content>
+                <InfoFooter authed={this.state.authed}/>
+
+            </Layout>
         )
     }
 
@@ -54,9 +60,6 @@ class App extends React.Component {
         this.setState({user: user});
     }
 
-    logUser(){
-        console.log(this.state);
-    }
 }
 
 export default App;

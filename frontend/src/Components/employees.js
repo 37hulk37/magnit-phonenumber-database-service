@@ -1,21 +1,7 @@
 import React from "react";
 import {Table} from "antd";
 
-class Tr extends React.Component{
-    user = this.props.user;
-
-    render() {
-        return(
-            <tr>
-                <th>{this.user.surname}</th>
-                <th>{this.user.name}</th>
-                <th>{this.user.department}</th>
-                <th>{this.user.phonenumber}</th>
-            </tr>
-        )
-    }
-}
-
+//TODO: Пагинация нам надо
 class Employees extends React.Component{
     columns = [
         {
@@ -61,7 +47,12 @@ class Employees extends React.Component{
                     }
                     </tbody>
                 </table>*/}
-                <Table dataSource={this.props.users} columns={this.columns}/>
+                <Table
+                    dataSource={this.props.users}
+                    columns={this.columns}
+                    pagination={false}
+                    rowKey="id"
+                />
             </div>
     )}
 }
