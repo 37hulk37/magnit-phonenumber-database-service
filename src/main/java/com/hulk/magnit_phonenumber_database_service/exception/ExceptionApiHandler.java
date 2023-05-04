@@ -28,6 +28,34 @@ public class ExceptionApiHandler {
                 .status(HttpStatus.IM_USED)
                 .body(new ErrorMessage(e.getMessage()));
     }
+    @ExceptionHandler(EmpNameException.class)
+    public ResponseEntity<ErrorMessage> handleEmpNameException(EmpNameException e) {
+        log.warn(e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(e.getMessage()));
+    }
+    @ExceptionHandler(EmpSurnameException.class)
+    public ResponseEntity<ErrorMessage> handleEmpSurnameException(EmpSurnameException e) {
+        log.warn(e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(e.getMessage()));
+    }
+    @ExceptionHandler(EmpPasswordException.class)
+    public ResponseEntity<ErrorMessage> handleEmpPasswordException(EmpPasswordException e) {
+        log.warn(e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(e.getMessage()));
+    }
+    @ExceptionHandler(EmpEmailException.class)
+    public ResponseEntity<ErrorMessage> handleEmpEmailException(EmpEmailException e) {
+        log.warn(e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(e.getMessage()));
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorMessage> handleBadCredentialsException(BadCredentialsException e) {

@@ -2,8 +2,10 @@ package com.hulk.magnit_phonenumber_database_service.entity;
 
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,8 +34,11 @@ public class Employee implements UserDetails {
     private UUID bossId;
     @Column(name = "department")
     private String department;
+
     @Column(name = "phonenumber")
     private String phonenumber;
+    /*@Email(message = "Email address has invalid format: ${validatedValue}",
+            regexp = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")*/
     @Column(name = "email")
     private String email;
     @Column(name = "password")
