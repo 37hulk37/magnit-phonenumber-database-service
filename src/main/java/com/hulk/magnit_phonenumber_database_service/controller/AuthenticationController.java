@@ -2,7 +2,7 @@ package com.hulk.magnit_phonenumber_database_service.controller;
 
 import com.hulk.magnit_phonenumber_database_service.auth.AuthenticationRequest;
 import com.hulk.magnit_phonenumber_database_service.auth.AuthenticationResponse;
-import com.hulk.magnit_phonenumber_database_service.auth.AuthenticationService;
+import com.hulk.magnit_phonenumber_database_service.jwt.AuthenticationService;
 import com.hulk.magnit_phonenumber_database_service.auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

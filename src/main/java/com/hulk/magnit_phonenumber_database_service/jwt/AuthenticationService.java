@@ -1,10 +1,12 @@
-package com.hulk.magnit_phonenumber_database_service.auth;
+package com.hulk.magnit_phonenumber_database_service.jwt;
 
 
+import com.hulk.magnit_phonenumber_database_service.auth.AuthenticationRequest;
+import com.hulk.magnit_phonenumber_database_service.auth.AuthenticationResponse;
+import com.hulk.magnit_phonenumber_database_service.auth.RegisterRequest;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTOMapper;
 import com.hulk.magnit_phonenumber_database_service.exception.EmployeeAlreadyExistsException;
 import com.hulk.magnit_phonenumber_database_service.exception.EmployeeNotFoundException;
-import com.hulk.magnit_phonenumber_database_service.jwt.JwtService;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.entity.Role;
 import com.hulk.magnit_phonenumber_database_service.service.EmployeeService;
@@ -12,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,8 @@ public class AuthenticationService {
     private EmployeeService employeeService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -59,6 +65,13 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request)  {
         log.info("Starting session registration...");
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
         String email = request.getEmail();
         Optional<Employee> foundEmployee = employeeService.findByEmail(email);
         if (foundEmployee.isEmpty()) {
