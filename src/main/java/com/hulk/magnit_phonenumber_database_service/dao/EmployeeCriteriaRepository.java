@@ -8,6 +8,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +21,7 @@ import java.util.Objects;
 public class EmployeeCriteriaRepository {
     private final CriteriaBuilder criteriaBuilder;
     private final EntityManager entityManager;
+    private static final Logger log = LoggerFactory.getLogger(EmployeeCriteriaRepository.class);
 
     public EmployeeCriteriaRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -32,6 +35,8 @@ public class EmployeeCriteriaRepository {
 
         criteriaQuery.where(predicate);
 
+        log.debug("Executing search query");
+
         TypedQuery<Employee> typedQuery = entityManager.createQuery(criteriaQuery);
 
         return new PageImpl<>(typedQuery.getResultList());
@@ -39,6 +44,8 @@ public class EmployeeCriteriaRepository {
 
     private Predicate getPredicate(EmployeeSearchCriteria searchCriteria,
                                    Root<Employee> employeeRoot) {
+        log.debug("Build predicate");
+
         List<Predicate> predicates = new ArrayList<>();
 
         addCriteriaToQuery(searchCriteria.getName(), "name", employeeRoot, predicates);
@@ -51,6 +58,8 @@ public class EmployeeCriteriaRepository {
     }
 
     private <T> void addCriteriaToQuery(T criteria, String str, Root<Employee> employeeRoot, List<Predicate> predicates) {
+        log.debug("Add criteria to query");
+
         if (Objects.nonNull(criteria)) {
             predicates.add(
                     criteriaBuilder.like(employeeRoot.get(str), "%" + criteria + "%")
