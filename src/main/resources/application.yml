@@ -2,13 +2,14 @@ server.port: 8080
 
 secret:
   key: "782F413F4428472B4B6250655368566D5971337436773979244226452948404D"
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/magnit-db
     username: postgres
     password: qwe
     driver-class-name: org.postgresql.Driver
+  main:
+    allow-circular-references: true
   jpa:
     hibernate:
       ddl-auto: update
