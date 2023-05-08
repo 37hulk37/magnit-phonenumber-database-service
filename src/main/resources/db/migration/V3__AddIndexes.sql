@@ -1,11 +1,11 @@
-CREATE INDEX fio
+CREATE INDEX IF NOT EXISTS fio
     ON employees (name, surname);
 
-CREATE INDEX boss
+CREATE INDEX IF NOT EXISTS boss
     ON employees (boss_id);
 
-CREATE INDEX department
+CREATE INDEX IF NOT EXISTS department
     ON employees (department);
 
-CREATE INDEX phone_number
+CREATE INDEX IF NOT EXISTS phone_number
     ON employees (phonenumber);
