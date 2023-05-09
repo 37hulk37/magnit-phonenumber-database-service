@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,6 +23,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
+    private PasswordEncoder pwdEncoder;
+    @Autowired
     private EmployeeCriteriaRepository employeeCriteriaRepository;
     @Autowired
     private EmployeeDTOMapper employeeDTOMapper;
@@ -30,6 +33,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void saveEmployee(Employee employee) {
         log.info("Saving employee with username: " + employee.getUsername());
+
+        System.out.println(pwdEncoder.encode(employee.getPassword()));
+        employee.setPassword(pwdEncoder.encode(employee.getPassword()));
+        System.out.println(pwdEncoder.encode(employee.getPassword()));
+
         employeeRepository.save(employee);
     }
 

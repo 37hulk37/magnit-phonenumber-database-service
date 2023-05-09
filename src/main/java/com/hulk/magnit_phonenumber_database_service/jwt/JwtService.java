@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
@@ -18,7 +19,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "782F413F4428472B4B6250655368566D5971337436773979244226452948404D";
+    @Value("${secret.key}")
+    private String SECRET_KEY;
     private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     public String extractUsername(String token) {
