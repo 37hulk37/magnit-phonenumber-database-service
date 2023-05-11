@@ -31,35 +31,27 @@ public class EmployeeController {
         if(employee==null){
             throw new EmployeeNotFoundException("There is no employee with ID = "+employee.getId()+"in Database");
         }
-        if(employee.getName().length()<2){
-            if (employee.getName().contains("1")||employee.getName().contains("2")||
-                    employee.getName().contains("3")||employee.getName().contains("4")
-                    ||employee.getName().contains("5")||employee.getName().contains("6")||employee.getName().contains("7")
-                    ||employee.getName().contains("8")||employee.getName().contains("9")||employee.getName().contains("0")){
-                throw new EmpNameException("Name shouldnt contain numbers");
-            }else{
-                throw new EmpNameException("Name must be >2 symbols");
-            }
 
+        Pattern patternSurname_Name = Pattern.compile("/^[a-zA-Z]{2,}$/");
+        Matcher matcherSurname = patternSurname_Name.matcher(employee.getSurname().trim());
+        Matcher matcherName = patternSurname_Name.matcher(employee.getName().trim());
+        if (!matcherSurname.matches()) {
+            throw new EmpSurnameException("Incorrect Surname");
         }
-        if(employee.getSurname().length()<2){
-            if (employee.getSurname().contains("1")||employee.getSurname().contains("2")||
-                    employee.getSurname().contains("3")||employee.getSurname().contains("4")
-                    ||employee.getSurname().contains("5")||employee.getSurname().contains("6")||employee.getSurname().contains("7")
-                    ||employee.getSurname().contains("8")||employee.getSurname().contains("9")||employee.getSurname().contains("0")){
-                throw new EmpSurnameException("Surname shouldnt contain numbers");
-            }else{
-                throw new EmpSurnameException("Surname must be >2 symbols");
-            }
+        if (!matcherName.matches()) {
+            throw new EmpNameException("Incorrect Name");
+        }
+        //^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$  - phonenumber
+        Pattern patternPassword = Pattern.compile(" /^\\w{6,}$/");
+        Matcher matcherPassword = patternPassword.matcher(employee.getPassword().trim());
+        if (!matcherPassword.matches()) {
+            throw new EmpPasswordException("Incorrect Password");
+        }
 
-        }
-        if(employee.getPassword().length()<6){
-            throw new EmpPasswordException("Password must me more than 6 symbols");
-        }
-        Pattern pattern = Pattern.compile("\\w+@[a-zA-Z]+\\.[a-zA-Z]+");
-        Matcher matcher = pattern.matcher(employee.getEmail().trim());
-        if (!matcher.matches()) {
-            throw new EmpEmailException("Incorrect Email");
+        Pattern patternEmail = Pattern.compile("\\w+@[a-zA-Z]+\\.[a-zA-Z]+");
+        Matcher matcherEmail = patternEmail.matcher(employee.getEmail().trim());
+        if (!matcherEmail.matches()) {
+            throw new EmpNameException("Incorrect Email");
         }
         employeeService.saveEmployee(employee);
 
@@ -71,34 +63,26 @@ public class EmployeeController {
         if(employee==null){
             throw new EmployeeNotFoundException("There is no employee with ID = "+employee.getId()+"in Database");
         }
-        if(employee.getName().length()<2){
-            if (employee.getName().contains("1")||employee.getName().contains("2")||
-                    employee.getName().contains("3")||employee.getName().contains("4")
-                    ||employee.getName().contains("5")||employee.getName().contains("6")||employee.getName().contains("7")
-                    ||employee.getName().contains("8")||employee.getName().contains("9")||employee.getName().contains("0")){
-                throw new EmpNameException("Name shouldnt contain numbers");
-            }else{
-                throw new EmpNameException("Name must be >2 symbols");
-            }
 
+        Pattern patternSurname_Name = Pattern.compile("/^[a-zA-Z]{2,}$/");
+        Matcher matcherSurname = patternSurname_Name.matcher(employee.getSurname().trim());
+        Matcher matcherName = patternSurname_Name.matcher(employee.getName().trim());
+        if (!matcherSurname.matches()) {
+            throw new EmpSurnameException("Incorrect Surname");
         }
-        if(employee.getSurname().length()<2){
-            if (employee.getSurname().contains("1")||employee.getSurname().contains("2")||
-                    employee.getSurname().contains("3")||employee.getSurname().contains("4")
-                    ||employee.getSurname().contains("5")||employee.getSurname().contains("6")||employee.getSurname().contains("7")
-                    ||employee.getSurname().contains("8")||employee.getSurname().contains("9")||employee.getSurname().contains("0")){
-                throw new EmpNameException("Surname shouldnt contain numbers");
-            }else{
-                throw new EmpNameException("Surname must be >2 symbols");
-            }
+        if (!matcherName.matches()) {
+            throw new EmpNameException("Incorrect Name");
+        }
+        //^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$  - phonenumber
+        Pattern patternPassword = Pattern.compile(" /^\\w{6,}$/");
+        Matcher matcherPassword = patternPassword.matcher(employee.getPassword().trim());
+        if (!matcherPassword.matches()) {
+            throw new EmpPasswordException("Incorrect Password");
+        }
 
-        }
-        if(employee.getPassword().length()<6){
-            throw new EmpNameException("Password must me more than 6 symbols");
-        }
-        Pattern pattern = Pattern.compile("\\w+@[a-zA-Z]+\\.[a-zA-Z]+");
-        Matcher matcher = pattern.matcher(employee.getEmail().trim());
-        if (!matcher.matches()) {
+        Pattern patternEmail = Pattern.compile("\\w+@[a-zA-Z]+\\.[a-zA-Z]+");
+        Matcher matcherEmail = patternEmail.matcher(employee.getEmail().trim());
+        if (!matcherEmail.matches()) {
             throw new EmpNameException("Incorrect Email");
         }
 
