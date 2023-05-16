@@ -24,8 +24,14 @@ spring:
     log-request-details: true
   flyway:
     baseline-on-migrate: true
+
 logging:
   level:
     org.springframework.web: DEBUG
     com.hulk.magnit_phonenumber_database_service: DEBUG
     org.hibernate.sql: DEBUG
+  file:
+    path: "./log"
+  logback:
+    rolling policy:
+      clean-history-on-start: true

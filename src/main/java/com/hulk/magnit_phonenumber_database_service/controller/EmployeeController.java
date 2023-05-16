@@ -29,7 +29,7 @@ public class EmployeeController {
     @PostMapping("/employees")
     public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody Employee employee) {
         if(employee==null){
-            throw new EmployeeNotFoundException("There is no employee with ID = "+employee.getId()+"in Database");
+            throw new EmployeeNotFoundException("There is no employee in Database");
         }
 
         Pattern patternSurname_Name = Pattern.compile("/^[a-zA-Z]{2,}$/");
@@ -61,7 +61,7 @@ public class EmployeeController {
     @PutMapping("/employees")
     public ResponseEntity<EmployeeDTO> updateEmployee(@RequestBody Employee employee) {
         if(employee==null){
-            throw new EmployeeNotFoundException("There is no employee with ID = "+employee.getId()+"in Database");
+            throw new EmployeeNotFoundException("There is no employee in Database");
         }
 
         Pattern patternSurname_Name = Pattern.compile("/^[a-zA-Z]{2,}$/");
