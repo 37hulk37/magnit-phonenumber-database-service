@@ -16,11 +16,11 @@ class InfoFooter extends React.Component {
         return(
             <Footer style={{
                 height: '60px',
-                textAlign: 'center' ,
+                textAlign: 'center',
                 flex: '0 0 auto',
                 backgroundColor: '#c6c6c6'
             }}
-            >Created in SpbSTU</Footer>
+            >Создано в СПБПУ</Footer>
         )
     }
 

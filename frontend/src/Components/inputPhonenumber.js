@@ -17,8 +17,8 @@ class inputPhonenumber extends React.Component {
                     initialValue={this.props.phonenumber}
                     rules = {
                         [
-                            {required: true, message: "Введите номер телефона"},
-                            { len: 11, message: 'Введите корректный номер телефона'}
+                            { required: true, message: "Введите номер телефона" },
+                            { pattern: /^(\+?[78]{1,1}[0-9]{10,10})$/i, message: 'Введите корректный номер телефона'}
                         ]
                     }
                 >

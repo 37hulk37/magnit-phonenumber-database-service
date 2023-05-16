@@ -3,7 +3,7 @@ import {getData} from "../scripts/api.js"
 import {Navigate} from "react-router-dom";
 import Employees from "../Components/employees";
 import DepartmentSelect from "../Components/departmentSelect";
-import {Button, Form, Input, message} from "antd";
+import {Button, Form, Input, message, Typography} from "antd";
 
 
 //TODO: Пагинация нам надо
@@ -34,7 +34,7 @@ class Search extends React.Component {
 
         return (
             <main>
-                <h2>Параметры поиска</h2>
+                <Typography.Title level={2}>Параметры поиска</Typography.Title>
                 <Form
                     layout="horizontal"
                     onFinish={this.searchButtonClick}
@@ -93,7 +93,7 @@ class Search extends React.Component {
         if(url === null){
             url = `?offset=${index-1}`;
         } else {
-            url = `/search?offset=${index-1}&`;
+            url = `/search?offset=${index-1}&` + url;
         }
         console.log(url);
         getData(
