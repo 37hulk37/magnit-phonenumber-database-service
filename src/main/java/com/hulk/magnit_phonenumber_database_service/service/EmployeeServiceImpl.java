@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeDTOMapper employeeDTOMapper;
     private static final Logger log = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
+    @Async
     @Override
     public void saveEmployee(Employee employee) {
         log.info("Saving employee with username: " + employee.getUsername());
@@ -67,6 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 });
     }
 
+    @Async
     @Override
     public void deleteEmployee(UUID id) {
         log.info("Deleting employee with id: " + id);
