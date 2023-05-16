@@ -4,7 +4,7 @@ import {addLogOutListener, postData} from "../scripts/api.js";
 import {Navigate} from "react-router-dom";
 import DepartmentSelect from "../Components/departmentSelect";
 import RoleSelect from "../Components/roleSelect";
-import {Button, Form, Input, message} from "antd";
+import {Button, Form, Input, message, Typography} from "antd";
 
 //TODO: уведомление о добавлении пользователей
 
@@ -32,7 +32,7 @@ class CreateEmployee extends React.Component {
 
         return (
             <main>
-                <h2>Добавить нового сотрудника</h2>
+                <Typography.Title>Добавить нового сотрудника</Typography.Title>
                 <Form
                     layout="horizontal"
                     onFinish={this.addButtonChange}
@@ -86,7 +86,7 @@ class CreateEmployee extends React.Component {
                         rules={
                             [
                                 { required: true, message: 'Введите Номер телефона' },
-                                { len: 11, message: 'Введите корректный номер телефона'}
+                                { pattern: /^(\+?[78]{1,1}[0-9]{10,10})$/i, message: 'Введите корректный номер телефона'}
                             ]
                         }>
                         <Input type="tel" name="phonenumber" id="phonenumber" placeholder="8**********"/>
@@ -110,7 +110,8 @@ class CreateEmployee extends React.Component {
                         rules={
                             [
                                 { required: true, message: 'Введите начальный пароль' },
-                                { min: 6, message: 'Слишком короткий пароль'}
+                                { min: 6, message: 'Слишком короткий пароль'},
+                                { pattern: /^(?!.*__)\w{6,}$/i, message: 'Разрешены только латинские буквы, цифры и _'}
                             ]
                         }>
                         <Input type="text" name="password" id="password"/>
