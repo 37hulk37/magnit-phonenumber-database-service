@@ -29,7 +29,7 @@ public class AuthenticationController {
     @PostMapping("/create-employee")
     public ResponseEntity<AuthenticationResponse> createEmployee(@RequestBody RegisterRequest request) {
         if(request==null){
-            throw new EmployeeNotFoundException("There is no employee with ID = "+request.getBossId()+"in Database");
+            throw new EmployeeNotFoundException("There is no employee in Database");
         }
 
         Pattern patternSurname_Name = Pattern.compile("[a-zA-Z]{2,}$");
