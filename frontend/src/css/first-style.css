@@ -1,0 +1,86 @@
+.content {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body{
+    margin: 0;
+    background-color: #c6c6c6;
+}
+
+html {
+    height: 100%;
+    background-color: #d6d6d6;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+label, input{
+    vertical-align: center;
+}
+
+input[type="email"], input[type="tel"], input[type="text"], input[type="password"], select {
+    margin: 5px 0 10px 5px;
+    padding: 2px 5px;
+
+    min-width:120px;
+    max-width: 200px;
+
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+
+}
+
+form {
+    margin: 0 0 0 0;
+}
+
+select,
+output,
+textarea {
+    min-width:120px;
+    max-width: 200px;
+
+    margin: 5px 0 10px 0;
+    padding: 2px 5px;
+
+    vertical-align: middle;
+
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+.buttons {
+    width:100%;
+    display: flex;
+    justify-content: center;
+    height: auto;
+    margin: 0 5px;
+    padding: 6px 15px;
+    text-align: center;
+}
+
+button:not(:first-child) .buttons{
+    margin-left: 15px;
+}
+
+h3 {
+    padding:0;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 0 0 4px 0;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+span {
+    padding:0;
+    font-size: 14px;
+    line-height: 24px;
+    margin-left: 0;
+    text-align: justify;
+    text-justify: inter-word;
+}
