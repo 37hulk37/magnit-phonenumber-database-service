@@ -1,49 +1,54 @@
 package com.hulk.magnit_phonenumber_database_service.controller;
 import java.io.*;
-import java.sql.*;
+import java.util.List;
+import java.util.Objects;
 
+import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
+import com.hulk.magnit_phonenumber_database_service.service.EmployeeService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
-public class SimpleDb2ExcelExporter {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-    public static void main(String[] args) {
-        new SimpleDb2ExcelExporter().export();
-    }
+@RestController
+@RequestMapping("excel")
+public class ExcelExporterController {
+    @Autowired
+    private EmployeeService employeeService;
 
+    @GetMapping("/export")
     public void export() {
-        String jdbcURL = "jdbc:postgresql://localhost:5432/magnit-db";
-        String username = "postgres";
-        String password = "";
+        String fileName = "employees-export.xlsx";
+        String directoryName = "output";
+        File directory = new File(directoryName);
 
-        String excelFilePath = "Employees-export.xlsx";
+        if ( !directory.exists() ) {
+            directory.mkdir();
+        }
 
-        try (Connection connection = DriverManager.getConnection(jdbcURL, username, password)) {
-            String sql = "SELECT * FROM employees";
+        try (FileOutputStream outputStream = new FileOutputStream(directoryName + "/" + fileName)) {
 
-            Statement statement = connection.createStatement();
-
-            ResultSet result = statement.executeQuery(sql);
+            List<EmployeeDTO> employees = employeeService.getEmployees();
 
             XSSFWorkbook workbook = new XSSFWorkbook();
             XSSFSheet sheet = workbook.createSheet("Employees");
 
             writeHeaderLine(sheet);
 
-            writeDataLines(result, workbook, sheet);
+            writeDataLines(employees, workbook, sheet);
 
-            FileOutputStream outputStream = new FileOutputStream(excelFilePath);
             workbook.write(outputStream);
-            workbook.close();
 
-            statement.close();
-
-        } catch (SQLException e) {
-            System.out.println("Datababse error:");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("File IO error:");
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
+
+        InputStream in = getClass().getResourceAsStream(directoryName + "/" + fileName);
     }
 
     private void writeHeaderLine(XSSFSheet sheet) {
@@ -72,25 +77,26 @@ public class SimpleDb2ExcelExporter {
         headerCell.setCellValue("Phonenumber");
     }
 
-    private void writeDataLines(ResultSet result, XSSFWorkbook workbook,
-                                XSSFSheet sheet) throws SQLException {
+    private void writeDataLines(List<EmployeeDTO> employees,
+                                XSSFWorkbook workbook,
+                                XSSFSheet sheet) {
         int rowCount = 1;
 
-        while (result.next()) {
-            String ID = result.getString("id");
-            String Name = result.getString("name");
-            String Surname = result.getString("surname");
+        for (EmployeeDTO employee : employees) {
+            String id = employee.id().toString();
+            String Name = employee.name();
+            String Surname = employee.surname();
 
-            String Role = result.getString("role");
-            String Email = result.getString("email");
-            String Department = result.getString("department");
-            String Phonenumber = result.getString("phonenumber");
+            String Role = employee.role().toString();
+            String Email = employee.email();
+            String Department = employee.department();
+            String Phonenumber = employee.phonenumber();
 
             Row row = sheet.createRow(rowCount++);
 
             int columnCount = 0;
             Cell cell = row.createCell(columnCount++);
-            cell.setCellValue(ID);
+            cell.setCellValue(id);
 
             cell = row.createCell(columnCount++);
             cell.setCellValue(Name);
@@ -116,8 +122,6 @@ public class SimpleDb2ExcelExporter {
             CreationHelper creationHelper = workbook.getCreationHelper();
             cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
             cell.setCellStyle(cellStyle);
-
-
         }
     }
 

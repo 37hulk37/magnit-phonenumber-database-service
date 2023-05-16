@@ -16,8 +16,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -46,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Page<EmployeeDTO> getEmployeesWithFilters(int offset, int limit, EmployeeSort sort, EmployeeSearchCriteria searchCriteria) {
         log.info("Getting employees with criteria = " + searchCriteria);
-        return employeeCriteriaRepository.findAllWithFilters(searchCriteria)
+        return employeeCriteriaRepository.findAllWithFilters(PageRequest.of(offset, limit, sort.getSortValue()), searchCriteria)
                 .map(employeeDTOMapper);
     }
 
@@ -56,6 +58,15 @@ public class EmployeeServiceImpl implements EmployeeService {
                 ", limit = " + limit + ", sort = " + sort.toString());
         return employeeRepository.findAll(PageRequest.of(offset, limit, sort.getSortValue()))
                 .map(employeeDTOMapper);
+    }
+
+    @Override
+    public List<EmployeeDTO> getEmployees() {
+        log.info("Getting employees for export file");
+
+        return employeeRepository.findAll().stream()
+                .map(employeeDTOMapper)
+                .collect(Collectors.toList());
     }
 
     @Override
