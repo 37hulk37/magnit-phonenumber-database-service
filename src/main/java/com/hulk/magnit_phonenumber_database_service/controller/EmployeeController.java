@@ -1,5 +1,6 @@
 package com.hulk.magnit_phonenumber_database_service.controller;
 
+import com.hulk.magnit_phonenumber_database_service.auth.PutRequest;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTOMapper;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
@@ -29,12 +30,12 @@ public class EmployeeController {
     @PostMapping("/employees")
     public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody Employee employee) {
         if(employee==null){
-            throw new EmployeeNotFoundException("There is no employee in Database");
+            throw new EmployeeNotFoundException("There is no employee with ID = "+employee.getId()+"in Database");
         }
 
-        Pattern patternSurname_Name = Pattern.compile("/^[a-zA-Z]{2,}$/");
-        Matcher matcherSurname = patternSurname_Name.matcher(employee.getSurname().trim());
-        Matcher matcherName = patternSurname_Name.matcher(employee.getName().trim());
+        Pattern patternSurnameName = Pattern.compile("/^[a-zA-Z]{2,}$/");
+        Matcher matcherSurname = patternSurnameName.matcher(employee.getSurname().trim());
+        Matcher matcherName = patternSurnameName.matcher(employee.getName().trim());
         if (!matcherSurname.matches()) {
             throw new EmpSurnameException("Incorrect Surname");
         }
@@ -42,7 +43,7 @@ public class EmployeeController {
             throw new EmpNameException("Incorrect Name");
         }
         //^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$  - phonenumber
-        Pattern patternPassword = Pattern.compile(" /^\\w{6,}$/");
+        Pattern patternPassword = Pattern.compile("^(?!.*__)\\w{6,}$");
         Matcher matcherPassword = patternPassword.matcher(employee.getPassword().trim());
         if (!matcherPassword.matches()) {
             throw new EmpPasswordException("Incorrect Password");
@@ -59,34 +60,30 @@ public class EmployeeController {
     }
 
     @PutMapping("/employees")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@RequestBody Employee employee) {
-        if(employee==null){
-            throw new EmployeeNotFoundException("There is no employee in Database");
+    public ResponseEntity<EmployeeDTO> updateEmployee(@RequestBody PutRequest putRequest) {
+        if (putRequest == null) {
+            throw new RuntimeException("State is null object");
         }
 
-        Pattern patternSurname_Name = Pattern.compile("/^[a-zA-Z]{2,}$/");
-        Matcher matcherSurname = patternSurname_Name.matcher(employee.getSurname().trim());
-        Matcher matcherName = patternSurname_Name.matcher(employee.getName().trim());
-        if (!matcherSurname.matches()) {
-            throw new EmpSurnameException("Incorrect Surname");
-        }
-        if (!matcherName.matches()) {
-            throw new EmpNameException("Incorrect Name");
-        }
-        //^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$  - phonenumber
-        Pattern patternPassword = Pattern.compile(" /^\\w{6,}$/");
-        Matcher matcherPassword = patternPassword.matcher(employee.getPassword().trim());
-        if (!matcherPassword.matches()) {
-            throw new EmpPasswordException("Incorrect Password");
+        Employee employee = employeeService.getEmployee(putRequest.getId());
+
+        Pattern passwordPattern = Pattern.compile("^(?!.*__)\\w{6,}$");
+        Matcher passwordMatcher = passwordPattern.matcher(putRequest.getState());
+
+        if (passwordMatcher.matches()) {
+            employee.setPassword(putRequest.getState());
+
+            employeeService.saveEmployee(employee);
         }
 
-        Pattern patternEmail = Pattern.compile("\\w+@[a-zA-Z]+\\.[a-zA-Z]+");
-        Matcher matcherEmail = patternEmail.matcher(employee.getEmail().trim());
-        if (!matcherEmail.matches()) {
-            throw new EmpNameException("Incorrect Email");
-        }
+        Pattern phonenumberPattern = Pattern.compile("^(\\+?7?8?[0-9]{1,10})$");
+        Matcher phonenumberMatcher = phonenumberPattern.matcher(putRequest.getState());
 
-        employeeService.saveEmployee(employee);
+        if (phonenumberMatcher.matches()) {
+            employee.setPhonenumber(putRequest.getState());
+
+            employeeService.saveEmployee(employee);
+        }
 
         return ResponseEntity.ok(employeeDTOMapper.apply(employee));
     }
@@ -116,8 +113,6 @@ public class EmployeeController {
                 .department(department)
                 .phonenumber(phonenumber)
                 .build();
-
-        //TODO: check how pagination works
 
         return ResponseEntity.ok(employeeService.getEmployeesWithFilters(offset, limit, sort, searchCriteria));
     }
