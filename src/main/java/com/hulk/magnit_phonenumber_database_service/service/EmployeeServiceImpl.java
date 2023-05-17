@@ -44,7 +44,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
     }
 
-    @Async
     @Override
     public boolean updateEmployee(UpdateRequest updateRequest) {
         log.info("Saving employee with username: " + updateRequest.getId());
