@@ -15,7 +15,7 @@ class InputPassword extends React.Component {
                 <Form.Item
                     name="password"
                     label="Новый пароль"
-                    initialValue=""
+                    initialValue="Magn1t!"
                     rules = {
                         [
                             {required: true, message: "Пароль не может быть пустым"},
