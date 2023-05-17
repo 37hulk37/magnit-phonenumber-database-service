@@ -109,21 +109,27 @@ class Lk extends React.Component {
 
     sendButtonClick(values) {
         this.setState({sendButtonActive: false});
-        let sendBody = {...this.props.user};
+        let userData = {...this.props.user};
+        let changedData;
 
         if(values.password !== '' && typeof values.password !== 'undefined'){
-            sendBody.password = values.password;
+            userData.password = values.password;
+            changedData = values.password;
         }
 
         if(values.phonenumber !== '' && typeof values.phonenumber !== 'undefined'){
-            sendBody.phonenumber = values.phonenumber;
+            userData.phonenumber = values.phonenumber;
+            changedData = values.phonenumber;
         }
         putData(
             'home/employees',
-            sendBody,
+            {
+                id: this.props.user.id,
+                state: changedData
+            },
             () => {
                 this.afterSend();
-                this.props.onChange(sendBody);
+                this.props.onChange(userData);
                 message.success('Данные успешно изменены')
             },
             (err) => {

@@ -19,7 +19,7 @@ class InputPassword extends React.Component {
                     rules = {
                     [
                         {required: true, message: "Пароль не может быть пустым"},
-                        {min: 6, type: 'string', message: "Пароль хотя бы 6 символов длиной"}
+                        { pattern: /^(?!.*__)\w{6,}$/i, message: 'Разрешены только латинские буквы, цифры и _'}
                     ]
                     }
                 >

@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import {logOut} from "../scripts/api.js";
 import {Button, Layout, Menu, theme} from 'antd';
 import logo from '../img/logoLightGrey.svg';
-import {AiOutlineLogout} from "react-icons/ai"
 const { Header } = Layout;
 
 class NavHeader extends React.Component {
@@ -20,21 +19,21 @@ class NavHeader extends React.Component {
         },
         {
             label: (<NavLink to="/lk">
-                Lk
+                ЛК
             </NavLink>),
             key: "lk",
 
         },
         {
             label: (<NavLink to="/search">
-                Search
+                Поиск
             </NavLink>),
             key: "search",
 
         },
         {
             label: (<NavLink to="/create-employee">
-                AddUser
+                Добавить работника
             </NavLink>),
             key: "create-employee",
 
@@ -45,7 +44,7 @@ class NavHeader extends React.Component {
     outItem = [
 
     {
-        label: ('LogOut'),
+        label: ('Выйти'),
         key: 'log-out',
         onClick: () => {logOut()},
         style: {float: 'right'}

@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Form, Input, message, Modal, Popconfirm, Space, Table} from "antd";
+import {Button, Form, Input, message, Modal, Popconfirm, Space, Table, Typography} from "antd";
 import {AiFillDelete, AiFillEdit} from "react-icons/ai";
 import {deleteData, putData} from "../scripts/api";
 import DepartmentSelect from "./departmentSelect";
@@ -81,7 +81,7 @@ class Employees extends React.Component{
                                 initialValue={this.state.currPhonenumber}
                                 rules={
                                     [
-                                        { length: 11, message: 'Введите корректный номер телефона'}
+                                        { pattern: /^(\+?[78]{1,1}[0-9]{10,10})$/i, message: 'Введите корректный номер телефона'}
                                     ]
                                 }>
 
@@ -122,7 +122,7 @@ class Employees extends React.Component{
     render() {
         return(
             <div>
-                <h2>Полученные данные</h2>
+                <Typography.Title>Полученные данные</Typography.Title>
                 <Table
                     dataSource={this.props.users}
                     columns={this.columns}
