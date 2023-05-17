@@ -48,7 +48,9 @@ public class Employee implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Lob
+    @Column(name = "content_type", table = "employee_images")
+    private String imageContentType;
+
     @Column(name = "image", table = "employee_images")
     private byte[] image;
 
@@ -61,6 +63,7 @@ public class Employee implements UserDetails {
         this.phonenumber = employeeDTO.phonenumber();
         this.email = employeeDTO.email();
         this.role = employeeDTO.role();
+        this.imageContentType = employeeDTO.imageContentType();
         this.image = employeeDTO.image();
     }
 

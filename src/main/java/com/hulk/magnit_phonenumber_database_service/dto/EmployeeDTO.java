@@ -13,6 +13,7 @@ public record EmployeeDTO (
         String email,
         String phonenumber,
         Role role,
+        String imageContentType,
         byte[] image
 ) {
 }
