@@ -17,10 +17,11 @@ class InputPassword extends React.Component {
                     label="Новый пароль"
                     initialValue=""
                     rules = {
-                    [
-                        {required: true, message: "Пароль не может быть пустым"},
-                        { pattern: /^(?!.*__)\w{6,}$/i, message: 'Разрешены только латинские буквы, цифры и _'}
-                    ]
+                        [
+                            {required: true, message: "Пароль не может быть пустым"},
+                            { pattern: /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){6,16}$/i,
+                                message: "Введите пароль длиной от 6 до 16 символов, состоящий из английских букв, цифр и специальных знаков"}
+                        ]
                     }
                 >
                     <Input type="password" name="password" id="password"/>
