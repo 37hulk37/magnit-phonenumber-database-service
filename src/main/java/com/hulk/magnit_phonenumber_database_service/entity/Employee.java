@@ -20,6 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "employees")
+@SecondaryTable(name = "employee_images", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class Employee implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,6 +48,10 @@ public class Employee implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Lob
+    @Column(name = "image", table = "employee_images")
+    private byte[] image;
+
     public Employee(EmployeeDTO employeeDTO) {
         this.id = employeeDTO.id();
         this.name = employeeDTO.name();
@@ -56,6 +61,7 @@ public class Employee implements UserDetails {
         this.phonenumber = employeeDTO.phonenumber();
         this.email = employeeDTO.email();
         this.role = employeeDTO.role();
+        this.image = employeeDTO.image();
     }
 
     @Override

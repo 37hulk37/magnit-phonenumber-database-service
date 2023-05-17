@@ -17,7 +17,8 @@ public class EmployeeDTOMapper implements Function<Employee, EmployeeDTO> {
                 employee.getDepartment(),
                 employee.getEmail(),
                 employee.getPhonenumber(),
-                employee.getRole()
+                employee.getRole(),
+                employee.getImage()
         );
     }
 }
