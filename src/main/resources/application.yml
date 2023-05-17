@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/magnit-db
     username: postgres
-    password: Severinaandrey123
+    password:
     driver-class-name: org.postgresql.Driver
   main:
     allow-circular-references: true
