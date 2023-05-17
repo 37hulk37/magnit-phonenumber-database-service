@@ -13,9 +13,14 @@ public class SimpleDb2ExcelExporter {
     public void export() {
         String jdbcURL = "jdbc:postgresql://localhost:5432/magnit-db";
         String username = "postgres";
-        String password = "";
+        String password = "Severinaandrey123";
 
-        String excelFilePath = "Employees-export.xlsx";
+        File directory = new File("C:/Users/днс/IdeaProjects/magnit-phonenumber-database-service-1/ExcelOutput");
+
+        if (directory.mkdir()) {
+            System.out.println("Directory created successfully");
+        }
+        String excelFilePath = "ExcelOutput/Employees-export.xlsx";
 
         try (Connection connection = DriverManager.getConnection(jdbcURL, username, password)) {
             String sql = "SELECT * FROM employees";
