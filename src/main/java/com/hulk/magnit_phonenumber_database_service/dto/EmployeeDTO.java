@@ -12,6 +12,8 @@ public record EmployeeDTO (
         String department,
         String email,
         String phonenumber,
-        Role role
+        Role role,
+        String imageContentType,
+        byte[] image
 ) {
 }

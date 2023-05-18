@@ -13,10 +13,13 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,5 +118,25 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
 
         return ResponseEntity.ok("Employee with id = " + id + " was deleted");
+    }
+
+    @PutMapping("/employees/{id}")
+    public ResponseEntity<String> uploadEmployeeImage(
+            @PathVariable UUID id,
+            @RequestParam("image") MultipartFile image
+    ) throws IOException {
+        Employee employee = employeeService.getEmployee(id);
+        employee.setImageContentType(image.getContentType());
+        employee.setImage(image.getBytes());
+        employeeService.saveEmployee(employee);
+        return ResponseEntity.ok("Image uploaded successfully: " + image.getOriginalFilename());
+    }
+
+    @GetMapping("/employees/{id}/image")
+    public ResponseEntity<byte[]> getEmployeeImage(@PathVariable UUID id) {
+        Employee employee = employeeService.getEmployee(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(employee.getImageContentType()))
+                .body(employee.getImage());
     }
 }
