@@ -89,7 +89,9 @@ class Lk extends React.Component {
         )}
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        this.form.resetFields();
+        if(this.form != null && typeof this.form != 'undefined') {
+            this.form.resetFields();
+        }
     }
 
     cancelButtonClick(event) {
