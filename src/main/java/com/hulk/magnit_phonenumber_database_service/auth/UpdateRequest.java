@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PutRequest {
+public class UpdateRequest {
     private UUID id;
     private String state;
 }

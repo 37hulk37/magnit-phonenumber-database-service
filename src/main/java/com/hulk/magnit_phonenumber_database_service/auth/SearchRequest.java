@@ -1,4 +1,4 @@
-package com.hulk.magnit_phonenumber_database_service.entity;
+package com.hulk.magnit_phonenumber_database_service.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EmployeeSearchCriteria {
+public class SearchRequest {
     private String name;
     private String surname;
     private UUID bossId;

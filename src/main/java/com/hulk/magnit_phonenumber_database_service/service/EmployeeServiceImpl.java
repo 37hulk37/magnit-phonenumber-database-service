@@ -1,18 +1,19 @@
 package com.hulk.magnit_phonenumber_database_service.service;
 
+import com.hulk.magnit_phonenumber_database_service.auth.UpdateRequest;
 import com.hulk.magnit_phonenumber_database_service.dao.EmployeeCriteriaRepository;
 import com.hulk.magnit_phonenumber_database_service.dao.EmployeeRepository;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTOMapper;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeSearchCriteria;
+import com.hulk.magnit_phonenumber_database_service.auth.SearchRequest;
+import com.hulk.magnit_phonenumber_database_service.exception.EmployeeNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,15 +39,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void saveEmployee(Employee employee) {
         log.info("Saving employee with username: " + employee.getUsername());
 
-        System.out.println(pwdEncoder.encode(employee.getPassword()));
         employee.setPassword(pwdEncoder.encode(employee.getPassword()));
-        System.out.println(pwdEncoder.encode(employee.getPassword()));
 
         employeeRepository.save(employee);
     }
 
     @Override
-    public Page<EmployeeDTO> getEmployeesWithFilters(int offset, int limit, EmployeeSort sort, EmployeeSearchCriteria searchCriteria) {
+    public boolean updateEmployee(UpdateRequest updateRequest) {
+        log.info("Saving employee with username: " + updateRequest.getId());
+        return employeeCriteriaRepository.updateEmployee(updateRequest) == 1;
+    }
+
+    @Override
+    public Page<EmployeeDTO> getEmployeesWithFilters(int offset, int limit, EmployeeSort sort, SearchRequest searchCriteria) {
         log.info("Getting employees with criteria = " + searchCriteria);
         return employeeCriteriaRepository.findAllWithFilters(PageRequest.of(offset, limit, sort.getSortValue()), searchCriteria)
                 .map(employeeDTOMapper);
@@ -74,7 +79,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("Getting employee with id: " + id);
         return employeeRepository.findById(id)
                 .orElseThrow(() -> {
-                    var e = new UsernameNotFoundException("There is no employee with this id");
+                    var e = new EmployeeNotFoundException("There is no employee with this id");
                     log.warn("Failed to get employee with id: " + id);
                     return e;
                 });

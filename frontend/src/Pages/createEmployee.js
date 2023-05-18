@@ -6,8 +6,6 @@ import DepartmentSelect from "../Components/departmentSelect";
 import RoleSelect from "../Components/roleSelect";
 import {Button, Form, Input, message, Typography} from "antd";
 
-//TODO: уведомление о добавлении пользователей
-
 class CreateEmployee extends React.Component {
 
     formRef = React.createRef();

@@ -1,10 +1,11 @@
 package com.hulk.magnit_phonenumber_database_service.controller;
 
-import com.hulk.magnit_phonenumber_database_service.auth.PutRequest;
+import com.hulk.magnit_phonenumber_database_service.auth.AuthenticationResponse;
+import com.hulk.magnit_phonenumber_database_service.auth.UpdateRequest;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTOMapper;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeSearchCriteria;
+import com.hulk.magnit_phonenumber_database_service.auth.SearchRequest;
 import com.hulk.magnit_phonenumber_database_service.exception.*;
 import com.hulk.magnit_phonenumber_database_service.service.EmployeeService;
 import com.hulk.magnit_phonenumber_database_service.service.EmployeeSort;
@@ -12,9 +13,13 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,32 +65,14 @@ public class EmployeeController {
     }
 
     @PutMapping("/employees")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@RequestBody PutRequest putRequest) {
-        if (putRequest == null) {
+    public ResponseEntity<HttpStatus> updateEmployee(@RequestBody UpdateRequest updateRequest) {
+        if (updateRequest == null) {
             throw new RuntimeException("State is null object");
         }
 
-        Employee employee = employeeService.getEmployee(putRequest.getId());
+        boolean isUpdated = employeeService.updateEmployee(updateRequest);
 
-        Pattern passwordPattern = Pattern.compile("^(?!.*__)\\w{6,}$");
-        Matcher passwordMatcher = passwordPattern.matcher(putRequest.getState());
-
-        if (passwordMatcher.matches()) {
-            employee.setPassword(putRequest.getState());
-
-            employeeService.saveEmployee(employee);
-        }
-
-        Pattern phonenumberPattern = Pattern.compile("^(\\+?7?8?[0-9]{1,10})$");
-        Matcher phonenumberMatcher = phonenumberPattern.matcher(putRequest.getState());
-
-        if (phonenumberMatcher.matches()) {
-            employee.setPhonenumber(putRequest.getState());
-
-            employeeService.saveEmployee(employee);
-        }
-
-        return ResponseEntity.ok(employeeDTOMapper.apply(employee));
+        return (isUpdated ? ResponseEntity.ok(HttpStatus.ACCEPTED) : ResponseEntity.ok(HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping("/employees/{id}")
@@ -106,7 +93,7 @@ public class EmployeeController {
             @RequestParam(value = "department", required = false) String department,
             @RequestParam(value = "phonenumber", required = false) String phonenumber
     ) {
-        EmployeeSearchCriteria searchCriteria = EmployeeSearchCriteria.builder()
+        SearchRequest searchCriteria = SearchRequest.builder()
                 .name(name)
                 .surname(surname)
                 .bossId(bossId)
@@ -131,5 +118,25 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
 
         return ResponseEntity.ok("Employee with id = " + id + " was deleted");
+    }
+
+    @PutMapping("/employees/{id}")
+    public ResponseEntity<String> uploadEmployeeImage(
+            @PathVariable UUID id,
+            @RequestParam("image") MultipartFile image
+    ) throws IOException {
+        Employee employee = employeeService.getEmployee(id);
+        employee.setImageContentType(image.getContentType());
+        employee.setImage(image.getBytes());
+        employeeService.saveEmployee(employee);
+        return ResponseEntity.ok("Image uploaded successfully: " + image.getOriginalFilename());
+    }
+
+    @GetMapping("/employees/{id}/image")
+    public ResponseEntity<byte[]> getEmployeeImage(@PathVariable UUID id) {
+        Employee employee = employeeService.getEmployee(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(employee.getImageContentType()))
+                .body(employee.getImage());
     }
 }

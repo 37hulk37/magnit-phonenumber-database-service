@@ -1,8 +1,9 @@
 package com.hulk.magnit_phonenumber_database_service.service;
 
+import com.hulk.magnit_phonenumber_database_service.auth.UpdateRequest;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeSearchCriteria;
+import com.hulk.magnit_phonenumber_database_service.auth.SearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Async;
 
@@ -14,11 +15,13 @@ public interface EmployeeService {
     @Async
     void saveEmployee(Employee employee);
 
-    Page<EmployeeDTO> getEmployeesWithFilters(int offset, int limit, EmployeeSort sort, EmployeeSearchCriteria searchCriteria);
+    Page<EmployeeDTO> getEmployeesWithFilters(int offset, int limit, EmployeeSort sort, SearchRequest searchCriteria);
 
     Page<EmployeeDTO> getEmployees(int offset, int limit, EmployeeSort sort);
 
     List<EmployeeDTO> getEmployees();
+
+    boolean updateEmployee(UpdateRequest updateRequest);
 
     Employee getEmployee(UUID id);
 

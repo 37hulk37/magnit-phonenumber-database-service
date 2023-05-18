@@ -1,28 +1,27 @@
 package com.hulk.magnit_phonenumber_database_service.controller;
 import java.io.*;
 import java.util.List;
-import java.util.Objects;
 
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
 import com.hulk.magnit_phonenumber_database_service.service.EmployeeService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("excel")
+@RequestMapping("/excel")
 public class ExcelExporterController {
     @Autowired
     private EmployeeService employeeService;
 
     @GetMapping("/export")
-    public void export() {
+    public ResponseEntity export() {
         String fileName = "employees-export.xlsx";
         String directoryName = "output";
         File directory = new File(directoryName);
@@ -30,6 +29,8 @@ public class ExcelExporterController {
         if ( !directory.exists() ) {
             directory.mkdir();
         }
+
+        ResponseEntity respEntity = null;
 
         try (FileOutputStream outputStream = new FileOutputStream(directoryName + "/" + fileName)) {
 
@@ -44,11 +45,15 @@ public class ExcelExporterController {
 
             workbook.write(outputStream);
 
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("content-disposition", "attachment; filename=" + fileName);
+            respEntity = new ResponseEntity(outputStream, responseHeaders, HttpStatus.OK);
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        InputStream in = getClass().getResourceAsStream(directoryName + "/" + fileName);
+        return respEntity;
     }
 
     private void writeHeaderLine(XSSFSheet sheet) {

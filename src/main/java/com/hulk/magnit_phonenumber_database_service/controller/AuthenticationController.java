@@ -28,29 +28,29 @@ public class AuthenticationController {
 
     @PostMapping("/create-employee")
     public ResponseEntity<AuthenticationResponse> createEmployee(@RequestBody RegisterRequest request) {
-        if(request==null){
+        if (request == null) {
             throw new EmployeeNotFoundException("There is no employee in Database");
         }
 
-        Pattern patternSurname_Name = Pattern.compile("[a-zA-Z]{2,}$");
-        Matcher matcherSurname = patternSurname_Name.matcher(request.getSurname().trim());
-        Matcher matcherName = patternSurname_Name.matcher(request.getName().trim());
+        Pattern patternSurnameName = Pattern.compile("[a-zA-Z]{2,}$");
+        Matcher matcherSurname = patternSurnameName.matcher(request.getSurname().trim());
+        Matcher matcherName = patternSurnameName.matcher(request.getName().trim());
         if (!matcherSurname.matches()) {
-            throw new EmpSurnameException("Incorrect Surname"+request.getSurname());
+            throw new EmpSurnameException("Incorrect Surname " + request.getSurname());
         }
         if (!matcherName.matches()) {
-            throw new EmpNameException("Incorrect Name"+request.getName());
+            throw new EmpNameException("Incorrect Name " + request.getName());
         }
-        //^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$  - phonenumber
-        Pattern patternPassword = Pattern.compile("\\w{6,}$");
+
+        Pattern patternPassword = Pattern.compile("^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){6,16}$");
         Matcher matcherPassword = patternPassword.matcher(request.getPassword().trim());
         if (!matcherPassword.matches()) {
-            throw new EmpPasswordException("Incorrect Password"+request.getPassword());
+            throw new EmpPasswordException("Incorrect Password " + request.getPassword());
         }
         Pattern patternEmail = Pattern.compile("\\w+@[a-zA-Z]+\\.[a-zA-Z]+");
         Matcher matcherEmail = patternEmail.matcher(request.getEmail().trim());
         if (!matcherEmail.matches()) {
-            throw new EmpNameException("Incorrect Email"+request.getEmail());
+            throw new EmpNameException("Incorrect Email " + request.getEmail());
         }
         return ResponseEntity.ok(service.createEmployee(request));
     }

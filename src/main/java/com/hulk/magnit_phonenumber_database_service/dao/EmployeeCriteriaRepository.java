@@ -1,13 +1,13 @@
 package com.hulk.magnit_phonenumber_database_service.dao;
 
+import com.hulk.magnit_phonenumber_database_service.auth.UpdateRequest;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeSearchCriteria;
+import com.hulk.magnit_phonenumber_database_service.auth.SearchRequest;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
@@ -16,6 +16,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Repository
 public class EmployeeCriteriaRepository {
@@ -28,33 +30,38 @@ public class EmployeeCriteriaRepository {
         this.criteriaBuilder = entityManager.getCriteriaBuilder();
     }
 
-    public Page<Employee> findAllWithFilters(EmployeeSearchCriteria searchCriteria) {
-        CriteriaQuery<Employee> criteriaQuery = criteriaBuilder.createQuery(Employee.class);
-        Root<Employee> employeeRoot = criteriaQuery.from(Employee.class);
-        Predicate predicate = getPredicate(searchCriteria, employeeRoot);
+    public Page<Employee> findAllWithFilters(Pageable employeePage, SearchRequest searchRequest) {
+        CriteriaQuery<Employee> searchQuery = criteriaBuilder.createQuery(Employee.class);
+        Root<Employee> employeeRoot = searchQuery.from(Employee.class);
+        Predicate predicateEmployees = getPredicate(searchRequest, employeeRoot);
 
-        criteriaQuery.where(predicate);
+        searchQuery.where(predicateEmployees);
 
-        log.debug("Executing search query");
+        TypedQuery<Employee> typedQuery = entityManager.createQuery(searchQuery);
+        typedQuery.setFirstResult(employeePage.getPageNumber() * employeePage.getPageSize());
+        typedQuery.setMaxResults(employeePage.getPageSize());
+        List<Employee> employees = typedQuery.getResultList();
 
-        TypedQuery<Employee> typedQuery = entityManager.createQuery(criteriaQuery);
+        Pageable pageable = PageRequest.of(employeePage.getPageNumber(), employeePage.getPageSize());
 
-        return new PageImpl<>(typedQuery.getResultList());
+        long count = getEmployeesCount(searchRequest);
+
+        return new PageImpl<>(employees, pageable, count);
     }
 
-    private Predicate getPredicate(EmployeeSearchCriteria searchCriteria,
+    private Predicate getPredicate(SearchRequest searchRequest,
                                    Root<Employee> employeeRoot) {
         log.debug("Build predicate");
 
         List<Predicate> predicates = new ArrayList<>();
 
-        addCriteriaToQuery(searchCriteria.getName(), "name", employeeRoot, predicates);
-        addCriteriaToQuery(searchCriteria.getSurname(), "surname", employeeRoot, predicates);
-        addCriteriaToQuery(searchCriteria.getBossId(), "bossId", employeeRoot, predicates);
-        addCriteriaToQuery(searchCriteria.getDepartment(), "department", employeeRoot, predicates);
-        addCriteriaToQuery(searchCriteria.getPhonenumber(), "phonenumber", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getName(), "name", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getSurname(), "surname", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getBossId(), "bossId", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getDepartment(), "department", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getPhonenumber(), "phonenumber", employeeRoot, predicates);
 
-        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 
     private <T> void addCriteriaToQuery(T criteria, String str, Root<Employee> employeeRoot, List<Predicate> predicates) {
@@ -62,8 +69,54 @@ public class EmployeeCriteriaRepository {
 
         if (Objects.nonNull(criteria)) {
             predicates.add(
-                    criteriaBuilder.like(employeeRoot.get(str), "%" + criteria + "%")
+                    criteriaBuilder.equal(employeeRoot.get(str), criteria)
             );
         }
+    }
+
+    private long getEmployeesCount(SearchRequest searchRequest) {
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Employee> root = countQuery.from(Employee.class);
+
+        Predicate predicateSearch = getPredicate(searchRequest, root);
+
+        countQuery.select(criteriaBuilder.count(root)).where(predicateSearch);
+
+        return entityManager.createQuery(countQuery).getSingleResult();
+    }
+
+    @Transactional
+    public int updateEmployee(UpdateRequest updateRequest) {
+        CriteriaUpdate<Employee> criteriaUpdate = criteriaBuilder.createCriteriaUpdate(Employee.class);
+        Root<Employee> employeeRoot = criteriaUpdate.from(Employee.class);
+
+        Pattern passwordPattern = Pattern.compile("^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){6,16}$");
+        Matcher passwordMatcher = passwordPattern.matcher(updateRequest.getState());
+
+        boolean stateIsValid = false;
+        if (passwordMatcher.matches()) {
+            stateIsValid = true;
+
+            criteriaUpdate.set("password", updateRequest.getState());
+        }
+
+        Pattern phonenumberPattern = Pattern.compile("^(\\+?[78]{1,1}([0-9]{10,10}))$");
+        Matcher phonenumberMatcher = phonenumberPattern.matcher(updateRequest.getState());
+
+        if (phonenumberMatcher.matches()) {
+            stateIsValid = true;
+
+            criteriaUpdate.set("phonenumber", updateRequest.getState());
+        }
+
+        if ( !stateIsValid ) {
+            return -1;
+        }
+        criteriaUpdate.where(criteriaBuilder.equal(employeeRoot.get("id"), updateRequest.getId()));
+
+        Query query= entityManager.createQuery(criteriaUpdate);
+        entityManager.joinTransaction();
+
+        return query.executeUpdate();
     }
 }
