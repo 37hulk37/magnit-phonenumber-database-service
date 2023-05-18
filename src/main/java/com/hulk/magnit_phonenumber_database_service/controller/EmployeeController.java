@@ -38,7 +38,7 @@ public class EmployeeController {
             throw new EmployeeNotFoundException("There is no employee with ID = "+employee.getId()+"in Database");
         }
 
-        Pattern patternSurnameName = Pattern.compile("[a-zA-Z]{2,}$");
+        Pattern patternSurnameName = Pattern.compile("/^[a-zA-Z]{2,}$/");
         Matcher matcherSurname = patternSurnameName.matcher(employee.getSurname().trim());
         Matcher matcherName = patternSurnameName.matcher(employee.getName().trim());
         if (!matcherSurname.matches()) {
@@ -48,7 +48,7 @@ public class EmployeeController {
             throw new EmpNameException("Incorrect Name");
         }
         //^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$  - phonenumber
-        Pattern patternPassword = Pattern.compile("\\w{6,}$");
+        Pattern patternPassword = Pattern.compile("^(?!.*__)\\w{6,}$");
         Matcher matcherPassword = patternPassword.matcher(employee.getPassword().trim());
         if (!matcherPassword.matches()) {
             throw new EmpPasswordException("Incorrect Password");
@@ -82,7 +82,7 @@ public class EmployeeController {
         );
     }
 
-    /*@GetMapping("/employees/search")
+    @GetMapping("/employees/search")
     public ResponseEntity<Page<EmployeeDTO>> getAllEmployees(
             @RequestParam(value = "offset", defaultValue = "0") @Min(0) int offset,
             @RequestParam(value = "limit", defaultValue = "20") @Min(1) @Max(40) int limit,
@@ -102,7 +102,7 @@ public class EmployeeController {
                 .build();
 
         return ResponseEntity.ok(employeeService.getEmployeesWithFilters(offset, limit, sort, searchCriteria));
-    }*/
+    }
 
     @GetMapping("/employees")
     public ResponseEntity<Page<EmployeeDTO>> getEmployees(
