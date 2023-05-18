@@ -22,7 +22,7 @@ class Lk extends React.Component {
         this.changePasswordClick = this.changePasswordClick.bind(this);
         this.cancelButtonClick = this.cancelButtonClick.bind(this);
 
-   }
+    }
 
     render() {
         if(this.props.authed === false || this.props.authed === 'false'){
@@ -36,8 +36,8 @@ class Lk extends React.Component {
             }}>
                 <Space direction="vertical"
                        style={{
-                            width: 400
-                        }}>
+                           width: 400
+                       }}>
                     <Title level={2}>Данные сотрудника</Title>
                     <span><img alt="Фото"></img></span>
 
@@ -48,45 +48,49 @@ class Lk extends React.Component {
                     <Title level={3}>Контактные данные</Title>
                     <Text>Почта:   {this.props.user.email}</Text>
                     <Text>Телефон: {this.props.user.phonenumber}</Text>
-                <Form
-                    id="form"
-                    ref={(el) => this.form = el}
-                    layout="horizontal"
-                    onFinish={this.sendButtonClick}
-                    autoComplete="off"
-                    labelCol={{
-                        span: 8,
-                    }}
-                    wrapperCol={{
-                        span: 16,
-                    }}
-                    style={{
-                    }}
-                >
-                    <Space direction={"horizontal"} className="buttons">
-                        <Button id="changeNumber" disabled={!this.state.changeNumberActive}
-                                onClick={this.changeNumberClick}>Изменить номер телефона</Button>
-                        <Button id="changePassword" disabled={!this.state.changePasswordActive}
-                                onClick={this.changePasswordClick}>Изменить пароль</Button>
-                    </Space>
+                    <Form
+                        id="form"
+                        ref={(el) => this.form = el}
+                        layout="horizontal"
+                        onFinish={this.sendButtonClick}
+                        autoComplete="off"
+                        labelCol={{
+                            span: 8,
+                        }}
+                        wrapperCol={{
+                            span: 16,
+                        }}
+                        style={{
+                        }}
+                    >
+                        <Space direction={"horizontal"} className="buttons">
+                            <Button id="changeNumber" disabled={!this.state.changeNumberActive}
+                                    onClick={this.changeNumberClick}>Изменить номер телефона</Button>
+                            <Button id="changePassword" disabled={!this.state.changePasswordActive}
+                                    onClick={this.changePasswordClick}>Изменить пароль</Button>
+                        </Space>
 
-                    <InputPhonenumber type="tel" name="phonenumber" id="phonenumber" hidden={!this.state.numberActive}
-                                      phonenumber={this.props.user.phonenumber} />
+                        <InputPhonenumber type="tel" name="phonenumber" id="phonenumber" hidden={!this.state.numberActive}
+                                          phonenumber={this.props.user.phonenumber} />
 
-                    <InputPassword hidden={!this.state.passwordActive} />
+                        <InputPassword hidden={!this.state.passwordActive} />
 
-                    <Space direction={"horizontal"} className="buttons">
-                        <Button type="primary" htmlType="submit" id="sendButton"
-                                disabled={!this.state.sendButtonActive}>Сохранить изменения</Button>
-                        <Button type="primary" htmlType="button" id="cancelButton"
-                                disabled={!this.state.sendButtonActive}
-                                onClick={this.cancelButtonClick}>Отменить изменения</Button>
+                        <Space direction={"horizontal"} className="buttons">
+                            <Button type="primary" htmlType="submit" id="sendButton"
+                                    disabled={!this.state.sendButtonActive}>Сохранить изменения</Button>
+                            <Button type="primary" htmlType="button" id="cancelButton"
+                                    disabled={!this.state.sendButtonActive}
+                                    onClick={this.cancelButtonClick}>Отменить изменения</Button>
 
-                    </Space>
-                </Form>
+                        </Space>
+                    </Form>
                 </Space>
             </main>
-    )}
+        )}
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        this.form.resetFields();
+    }
 
     cancelButtonClick(event) {
         this.form.resetFields();
@@ -128,14 +132,14 @@ class Lk extends React.Component {
                 state: changedData
             },
             () => {
-                this.afterSend();
                 this.props.onChange(userData);
-                message.success('Данные успешно изменены')
+                message.success('Данные успешно изменены');
+                this.afterSend();
             },
             (err) => {
-                this.afterSend();
                 this.props.onChange(this.props.user);
                 message.error('Не удалось отправить данные');
+                this.afterSend();
             }
         )
     }
@@ -146,6 +150,7 @@ class Lk extends React.Component {
         this.setState({changeNumberActive: true});
         this.setState({changePasswordActive: true});
         this.setState({sendButtonActive: false});
+        this.form.resetFields();
     }
 
 }
