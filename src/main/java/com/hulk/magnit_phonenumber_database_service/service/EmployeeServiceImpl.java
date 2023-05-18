@@ -53,8 +53,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Page<EmployeeDTO> getEmployeesWithFilters(int offset, int limit, EmployeeSort sort, SearchRequest searchCriteria) {
         log.info("Getting employees with criteria = " + searchCriteria);
-        return employeeCriteriaRepository.findAllWithFilters(PageRequest.of(offset, limit, sort.getSortValue()), searchCriteria)
-                .map(employeeDTOMapper);
+       // return employeeCriteriaRepository.findAllWithFilters(PageRequest.of(offset, limit, sort.getSortValue()), searchCriteria)
+            //    .map(employeeDTOMapper);
+        return null;
     }
 
     @Override
