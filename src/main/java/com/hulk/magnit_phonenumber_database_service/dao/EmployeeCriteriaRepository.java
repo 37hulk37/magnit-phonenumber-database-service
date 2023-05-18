@@ -30,39 +30,38 @@ public class EmployeeCriteriaRepository {
         this.criteriaBuilder = entityManager.getCriteriaBuilder();
     }
 
-    public Page<Employee> findAllWithFilters(Pageable employeePageable, SearchRequest searchCriteria) {
-        CriteriaQuery<Employee> criteriaQuery = criteriaBuilder.createQuery(Employee.class);
-        Root<Employee> employeeRoot = criteriaQuery.from(Employee.class);
-        Predicate predicate = getPredicate(searchCriteria, employeeRoot);
+    public Page<Employee> findAllWithFilters(Pageable employeePage, SearchRequest searchRequest) {
+        CriteriaQuery<Employee> searchQuery = criteriaBuilder.createQuery(Employee.class);
+        Root<Employee> employeeRoot = searchQuery.from(Employee.class);
+        Predicate predicateEmployees = getPredicate(searchRequest, employeeRoot);
 
-        criteriaQuery.where(predicate);
+        searchQuery.where(predicateEmployees);
 
-        log.debug("Executing search query");
-
-        TypedQuery<Employee> typedQuery = entityManager.createQuery(criteriaQuery);
-        typedQuery.setFirstResult(employeePageable.getPageNumber() * employeePageable.getPageSize());
-        typedQuery.setMaxResults(employeePageable.getPageSize());
-
+        TypedQuery<Employee> typedQuery = entityManager.createQuery(searchQuery);
+        typedQuery.setFirstResult(employeePage.getPageNumber() * employeePage.getPageSize());
+        typedQuery.setMaxResults(employeePage.getPageSize());
         List<Employee> employees = typedQuery.getResultList();
 
-        Pageable pageable = PageRequest.of(employeePageable.getPageNumber(), employeePageable.getPageSize());
+        Pageable pageable = PageRequest.of(employeePage.getPageNumber(), employeePage.getPageSize());
 
-        return new PageImpl<>(employees, pageable, employees.size());
+        long count = getEmployeesCount(searchRequest);
+
+        return new PageImpl<>(employees, pageable, count);
     }
 
-    private Predicate getPredicate(SearchRequest searchCriteria,
+    private Predicate getPredicate(SearchRequest searchRequest,
                                    Root<Employee> employeeRoot) {
         log.debug("Build predicate");
 
         List<Predicate> predicates = new ArrayList<>();
 
-        addCriteriaToQuery(searchCriteria.getName(), "name", employeeRoot, predicates);
-        addCriteriaToQuery(searchCriteria.getSurname(), "surname", employeeRoot, predicates);
-        addCriteriaToQuery(searchCriteria.getBossId(), "bossId", employeeRoot, predicates);
-        addCriteriaToQuery(searchCriteria.getDepartment(), "department", employeeRoot, predicates);
-        addCriteriaToQuery(searchCriteria.getPhonenumber(), "phonenumber", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getName(), "name", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getSurname(), "surname", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getBossId(), "bossId", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getDepartment(), "department", employeeRoot, predicates);
+        addCriteriaToQuery(searchRequest.getPhonenumber(), "phonenumber", employeeRoot, predicates);
 
-        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 
     private <T> void addCriteriaToQuery(T criteria, String str, Root<Employee> employeeRoot, List<Predicate> predicates) {
@@ -70,9 +69,20 @@ public class EmployeeCriteriaRepository {
 
         if (Objects.nonNull(criteria)) {
             predicates.add(
-                    criteriaBuilder.like(employeeRoot.get(str), "%" + criteria + "%")
+                    criteriaBuilder.equal(employeeRoot.get(str), criteria)
             );
         }
+    }
+
+    private long getEmployeesCount(SearchRequest searchRequest) {
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Employee> root = countQuery.from(Employee.class);
+
+        Predicate predicateSearch = getPredicate(searchRequest, root);
+
+        countQuery.select(criteriaBuilder.count(root)).where(predicateSearch);
+
+        return entityManager.createQuery(countQuery).getSingleResult();
     }
 
     @Transactional

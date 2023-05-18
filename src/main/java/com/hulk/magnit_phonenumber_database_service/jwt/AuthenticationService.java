@@ -49,7 +49,7 @@ public class AuthenticationService {
                 .department(request.getDepartment())
                 .phonenumber(request.getPhonenumber())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(request.getRole())
                 .build();
 
         employeeService.saveEmployee(employee);
