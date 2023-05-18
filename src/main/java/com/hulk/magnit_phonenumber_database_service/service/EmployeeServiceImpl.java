@@ -7,7 +7,6 @@ import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTOMapper;
 import com.hulk.magnit_phonenumber_database_service.entity.Employee;
 import com.hulk.magnit_phonenumber_database_service.dto.EmployeeDTO;
 import com.hulk.magnit_phonenumber_database_service.auth.SearchRequest;
-import com.hulk.magnit_phonenumber_database_service.entity.EmployeeSearchCriteria;
 import com.hulk.magnit_phonenumber_database_service.exception.EmployeeNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
